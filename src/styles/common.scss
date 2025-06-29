@@ -1,0 +1,185 @@
+@use "variables";
+
+// 通用样式类
+
+// 布局类
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+// 定位类
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+// 文本类
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: variables.$text-primary;
+}
+
+.text-secondary {
+  color: variables.$text-secondary;
+}
+
+.text-muted {
+  color: variables.$text-muted;
+}
+
+.text-accent {
+  color: variables.$text-accent;
+}
+
+// 字体大小类
+.text-xs { font-size: variables.$font-size-xs; }
+.text-sm { font-size: variables.$font-size-sm; }
+.text-base { font-size: variables.$font-size-base; }
+.text-lg { font-size: variables.$font-size-lg; }
+.text-xl { font-size: variables.$font-size-xl; }
+.text-2xl { font-size: variables.$font-size-2xl; }
+.text-3xl { font-size: variables.$font-size-3xl; }
+
+// 字重类
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+// 间距类
+.m-0 { margin: 0; }
+.m-1 { margin: 4px; }
+.m-2 { margin: 8px; }
+.m-3 { margin: 12px; }
+.m-4 { margin: 16px; }
+.m-5 { margin: 20px; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }
+.p-5 { padding: 20px; }
+
+// 宽高类
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.w-auto { width: auto; }
+.h-auto { height: auto; }
+
+// 显示隐藏类
+.hidden { display: none; }
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+// 透明度类
+.opacity-0 { opacity: 0; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
+
+// 圆角类
+.rounded { border-radius: variables.$card-border-radius; }
+.rounded-full { border-radius: 50%; }
+
+// 阴影类
+.shadow-sm { box-shadow: variables.$shadow-sm; }
+.shadow-md { box-shadow: variables.$shadow-md; }
+.shadow-lg { box-shadow: variables.$shadow-lg; }
+.shadow-glow { box-shadow: variables.$shadow-glow; }
+
+// 过渡动画类
+.transition {
+  transition: all variables.$transition-normal ease;
+}
+
+.transition-fast {
+  transition: all variables.$transition-fast ease;
+}
+
+.transition-slow {
+  transition: all variables.$transition-slow ease;
+}
+
+// 鼠标悬停效果
+.hover-scale {
+  transition: transform variables.$transition-normal ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.hover-glow {
+  transition: box-shadow variables.$transition-normal ease;
+  
+  &:hover {
+    box-shadow: variables.$shadow-glow;
+  }
+}
+
+// 渐变背景类
+.bg-gradient-primary {
+  background: linear-gradient(135deg, variables.$primary-color, variables.$secondary-color);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, variables.$bg-secondary, variables.$bg-primary);
+}
+
+// 边框类
+.border {
+  border: 1px solid variables.$border-secondary;
+}
+
+.border-primary {
+  border: 1px solid variables.$border-primary;
+}
+
+.border-glow {
+  border: 1px solid variables.$border-primary;
+  box-shadow: variables.$border-glow;
+}

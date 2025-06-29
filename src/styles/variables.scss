@@ -1,0 +1,57 @@
+// 颜色变量
+$primary-color: #00d4ff;        // 主色调 - 科技蓝
+$secondary-color: #00ff88;      // 辅助色 - 生态绿
+$accent-color: #ff6b35;         // 强调色 - 活力橙
+$warning-color: #ffd700;        // 警告色 - 金黄
+$danger-color: #ff4757;         // 危险色 - 红色
+$success-color: #2ed573;        // 成功色 - 绿色
+
+// 背景色
+$bg-primary: #0a1628;           // 主背景 - 深蓝
+$bg-secondary: #1a2332;         // 次背景 - 深灰蓝
+$bg-card: rgba(26, 35, 50, 0.8); // 卡片背景 - 半透明
+$bg-overlay: rgba(0, 0, 0, 0.6); // 遮罩背景
+$bg-gradient-primary: linear-gradient(135deg, #0a1628 0%, #1a2332 100%); // 主渐变背景
+
+// 文字颜色
+$text-primary: #ffffff;         // 主文字 - 白色
+$text-secondary: #b8c5d1;       // 次文字 - 浅灰
+$text-muted: #6c7b7f;          // 弱化文字 - 灰色
+$text-accent: $primary-color;   // 强调文字
+
+// 边框颜色
+$border-primary: rgba(0, 212, 255, 0.3); // 主边框
+$border-secondary: rgba(255, 255, 255, 0.1); // 次边框
+$border-glow: 0 0 10px rgba(0, 212, 255, 0.5); // 发光边框
+
+// 尺寸变量
+$header-height: 80px;
+$sidebar-width: 280px;
+$card-border-radius: 8px;
+$container-padding: 20px;
+
+// 字体大小
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 32px;
+
+// 阴影
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+$shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+
+// 动画时间
+$transition-fast: 0.2s;
+$transition-normal: 0.3s;
+$transition-slow: 0.5s;
+
+// 断点
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;

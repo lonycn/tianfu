@@ -1,0 +1,722 @@
+@use "variables";
+
+// Dashboard 样式
+
+.dashboard {
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(ellipse at center, #0f1419 0%, #0a0e13 100%),
+    linear-gradient(135deg, #0a1628 0%, #1a2332 50%, #0f1419 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+
+  // 背景装饰
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 60%, rgba(255, 107, 53, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 60% 20%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+// 粒子动画背景
+.bg-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  
+  .particle {
+    position: absolute;
+    background: rgba(0, 212, 255, 0.6);
+    border-radius: 50%;
+    animation: float infinite linear;
+    
+    &:nth-child(3n) {
+      background: rgba(0, 255, 136, 0.6);
+    }
+    
+    &:nth-child(5n) {
+      background: rgba(255, 107, 53, 0.6);
+    }
+    
+    &:nth-child(7n) {
+      background: rgba(138, 43, 226, 0.6);
+    }
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+// 网格背景
+.grid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.3;
+}
+
+// 头部样式
+.dashboard-header {
+  height: variables.$header-height;
+  background: 
+    linear-gradient(135deg, rgba(15, 20, 25, 0.95) 0%, rgba(26, 35, 50, 0.95) 100%),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, transparent 50%, rgba(0, 255, 136, 0.1) 100%);
+  backdrop-filter: blur(15px);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, rgba(0, 212, 255, 0.8), rgba(0, 255, 136, 0.8), rgba(255, 107, 53, 0.8)) 1;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 100;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+      rgba(0, 212, 255, 0.05) 0%, 
+      transparent 25%, 
+      transparent 75%, 
+      rgba(0, 255, 136, 0.05) 100%);
+    pointer-events: none;
+  }
+
+  .header-content {
+    height: 100%;
+    padding: 0 variables.$container-padding;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .logo-inner {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #0a1628;
+        box-shadow: 
+          0 0 20px rgba(0, 212, 255, 0.6),
+          inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        z-index: 2;
+        position: relative;
+      }
+      
+      .logo-ring {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        background: linear-gradient(45deg, rgba(0, 212, 255, 0.8), rgba(0, 255, 136, 0.8)) border-box;
+        mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        animation: rotate 3s linear infinite;
+      }
+    }
+
+    .title-group {
+      .title {
+        font-size: 28px;
+        font-weight: 700;
+        color: variables.$text-primary;
+        text-shadow: 
+          0 0 10px rgba(0, 212, 255, 0.8),
+          0 0 20px rgba(0, 212, 255, 0.4);
+        margin: 0;
+        line-height: 1.2;
+      }
+      
+      .subtitle {
+        font-size: 14px;
+        color: rgba(0, 255, 136, 0.9);
+        margin: 4px 0 0 0;
+        font-weight: 400;
+        text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+      }
+    }
+  }
+
+  .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      flex: 1;
+      justify-content: center;
+      
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 255, 136, 0.1));
+          border-radius: 8px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .nav-icon {
+          width: 20px;
+          height: 20px;
+          background: linear-gradient(135deg, #00d4ff, #00ff88);
+          border-radius: 4px;
+          position: relative;
+          z-index: 1;
+          
+          &::before {
+            content: '●';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #0a1628;
+            font-size: 12px;
+            font-weight: bold;
+          }
+        }
+        
+        .nav-text {
+          font-size: 12px;
+          color: variables.$text-secondary;
+          font-weight: 500;
+          position: relative;
+          z-index: 1;
+          transition: color 0.3s ease;
+        }
+        
+        &:hover {
+          transform: translateY(-2px);
+          border-color: rgba(0, 212, 255, 0.6);
+          box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+          
+          &::before {
+            opacity: 1;
+          }
+          
+          .nav-text {
+            color: variables.$text-primary;
+          }
+        }
+        
+        &.active {
+          background: rgba(0, 212, 255, 0.15);
+          border-color: rgba(0, 212, 255, 0.8);
+          box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+          
+          &::before {
+            opacity: 1;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.2));
+          }
+          
+          .nav-icon {
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+          }
+          
+          .nav-text {
+            color: variables.$text-primary;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+          }
+        }
+      }
+    }
+
+    .time-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+
+      .current-time {
+        font-size: 24px;
+        color: variables.$text-primary;
+        font-weight: 600;
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        font-family: 'Courier New', monospace;
+      }
+
+      .current-date {
+        font-size: 14px;
+        color: variables.$text-secondary;
+        font-weight: 400;
+      }
+      
+      .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: rgba(0, 255, 136, 0.9);
+        
+        .status-dot {
+          width: 8px;
+          height: 8px;
+          background: #00ff88;
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+          animation: pulse 2s infinite;
+        }
+      }
+    }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// 主内容区域
+.dashboard-main {
+  height: calc(100vh - #{variables.$header-height});
+  padding: variables.$container-padding;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  overflow-y: auto;
+  
+  // 添加网格布局的视觉效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(90deg, rgba(0, 212, 255, 0.02) 0%, transparent 50%, rgba(0, 255, 136, 0.02) 100%),
+      linear-gradient(0deg, rgba(255, 107, 53, 0.02) 0%, transparent 50%, rgba(138, 43, 226, 0.02) 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .page-content {
+    width: 100%;
+    height: 100%;
+    
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: variables.$container-padding;
+      height: 100%;
+      width: 100%;
+    }
+    
+    .full-width-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      gap: variables.$container-padding;
+      height: 100%;
+      width: 100%;
+    }
+    
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr;
+      gap: variables.$container-padding;
+      height: 100%;
+      width: 100%;
+      
+      .dashboard-card {
+        height: fit-content;
+      }
+    }
+  }
+}
+
+// 卡片基础样式
+.dashboard-card {
+  background: 
+    linear-gradient(135deg, rgba(15, 20, 25, 0.9) 0%, rgba(26, 35, 50, 0.9) 100%),
+    linear-gradient(45deg, rgba(0, 212, 255, 0.05) 0%, transparent 50%, rgba(0, 255, 136, 0.05) 100%);
+  border: 1px solid transparent;
+  border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 136, 0.3), rgba(255, 107, 53, 0.3)) 1;
+  border-radius: variables.$card-border-radius;
+  backdrop-filter: blur(15px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(0, 212, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all variables.$transition-normal ease;
+
+  // 科技感边框效果
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(135deg, rgba(0, 212, 255, 0.03) 0%, transparent 50%, rgba(0, 255, 136, 0.03) 100%),
+      radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // 扫描线动画
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(0, 212, 255, 0.8),
+      rgba(0, 255, 136, 0.8),
+      transparent
+    );
+    animation: scan 3s linear infinite;
+    z-index: 2;
+  }
+
+  &:hover {
+    border-image: linear-gradient(135deg, rgba(0, 212, 255, 0.8), rgba(0, 255, 136, 0.8), rgba(255, 107, 53, 0.8)) 1;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 0 0 1px rgba(0, 212, 255, 0.3),
+      0 0 30px rgba(0, 212, 255, 0.2);
+    transform: translateY(-4px) scale(1.02);
+    
+    &::after {
+      animation-duration: 1.5s;
+    }
+  }
+
+  // 内容区域需要相对定位
+  > * {
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-header {
+    padding: 20px 20px 10px;
+    border-bottom: 1px solid variables.$border-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .card-title {
+      font-size: variables.$font-size-lg;
+      font-weight: 600;
+      color: variables.$text-primary;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        color: variables.$primary-color;
+      }
+    }
+
+    .card-extra {
+      font-size: variables.$font-size-sm;
+      color: variables.$text-secondary;
+    }
+  }
+
+  .card-content {
+    padding: 20px;
+    height: calc(100% - 60px);
+    position: relative;
+  }
+}
+
+// 特殊布局卡片
+.card-large {
+  grid-column: span 2;
+}
+
+.card-tall {
+  grid-row: span 2;
+}
+
+// 数据展示组件样式
+.data-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-size: variables.$font-size-sm;
+    color: variables.$text-secondary;
+  }
+
+  .value {
+    font-size: variables.$font-size-base;
+    font-weight: 600;
+    color: variables.$text-primary;
+
+    &.success {
+      color: variables.$success-color;
+    }
+
+    &.warning {
+      color: variables.$warning-color;
+    }
+
+    &.danger {
+      color: variables.$danger-color;
+    }
+  }
+}
+
+// 设置页面样式
+.settings-content {
+  .setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .label {
+      font-size: variables.$font-size-sm;
+      color: variables.$text-secondary;
+      font-weight: 500;
+    }
+    
+    .value {
+      font-size: variables.$font-size-sm;
+      color: variables.$text-primary;
+      font-weight: 600;
+      background: rgba(0, 212, 255, 0.1);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+  }
+}
+
+// 图表占位符样式
+.chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  background: rgba(0, 212, 255, 0.05);
+  border: 2px dashed rgba(0, 212, 255, 0.3);
+  border-radius: 8px;
+  color: variables.$text-secondary;
+  font-size: variables.$font-size-lg;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+  
+  &::before {
+     content: '';
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     width: 60px;
+     height: 60px;
+     background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.2));
+     border-radius: 50%;
+     z-index: -1;
+   }
+}
+
+// 状态指示器
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: variables.$font-size-xs;
+  font-weight: 500;
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &.online {
+    background: rgba(46, 213, 115, 0.2);
+    color: variables.$success-color;
+
+    .dot {
+      background: variables.$success-color;
+      box-shadow: 0 0 6px variables.$success-color;
+    }
+  }
+
+  &.offline {
+    background: rgba(255, 71, 87, 0.2);
+    color: variables.$danger-color;
+
+    .dot {
+      background: variables.$danger-color;
+      box-shadow: 0 0 6px variables.$danger-color;
+    }
+  }
+
+  &.warning {
+    background: rgba(255, 215, 0, 0.2);
+    color: variables.$warning-color;
+
+    .dot {
+      background: variables.$warning-color;
+      box-shadow: 0 0 6px variables.$warning-color;
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: variables.$breakpoint-lg) {
+  .dashboard-main {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: variables.$breakpoint-md) {
+  .dashboard-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .dashboard-header {
+    .header-content {
+      padding: 0 15px;
+    }
+
+    .logo-section .title {
+      font-size: variables.$font-size-xl;
+    }
+  }
+
+  .card-large,
+  .card-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
