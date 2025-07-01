@@ -368,7 +368,7 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid $border-secondary;
   border-radius: 8px;
-  padding: 15px;
+  padding: 5px;
   
   .chart-title {
     margin: 0 0 10px 0;

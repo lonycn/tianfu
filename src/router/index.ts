@@ -89,6 +89,14 @@ const routes: RouteRecordRaw[] = [
     meta: {
       title: '系统运维板块'
     }
+  },
+  {
+    path: '/map_draw',
+    name: 'MapDraw',
+    component: () => import('@/views/MapDrawPage.vue'),
+    meta: {
+      title: '地图区域绘制工具'
+    }
   }
 ]
 

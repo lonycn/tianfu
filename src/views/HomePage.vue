@@ -1,21 +1,19 @@
 <template>
-  <dv-full-screen-container>
+  <div>
     <div class="homepage">
-      <!-- 高德地图背景 -->
-      <div ref="mapContainer" class="map-container"></div>
+    <!-- 页面头部 -->
+    <UnifiedHeader />
+
       
       <!-- 遮罩层 -->
       <div class="map-overlay"></div>
     
-    <!-- 页面头部 -->
-    <UnifiedHeader />
-
     <!-- 主内容 -->
     <main class="homepage-main">
       <!-- 左侧悬浮区域 -->
       <section class="left-floating-section">
         <!-- 项目概况 -->
-        <dv-border-box-8 class="floating-card project-overview" :color="['#4fd2dd', '#235fa7']">
+        <FloatingCard class="project-overview">
           <h3 class="section-title">项目概况</h3>
           <div class="project-content">
             <div class="project-title">
@@ -40,25 +38,25 @@
               </div>
             </div>
           </div>
-        </dv-border-box-8>
+        </FloatingCard>
         
-        <dv-border-box-8 class="floating-card wetland-overview" :color="['#4fd2dd', '#235fa7']">
+        <FloatingCard class="wetland-overview">
           <h3 class="section-title">湿地概览</h3>
           <div class="overview-content">
             <div ref="wetlandChart" class="wetland-chart"></div>
           </div>
-        </dv-border-box-8>
+        </FloatingCard>
         
         <!-- 功能区划图 -->
-        <dv-border-box-8 class="floating-card zone-map" :color="['#4fd2dd', '#235fa7']">
+        <FloatingCard class="zone-map">
           <h3 class="section-title">功能区划图</h3>
           <div ref="zoneChart" class="zone-chart"></div>
-        </dv-border-box-8>
+        </FloatingCard>
       </section>
 
       <!-- 右侧悬浮区域 -->
       <section class="right-floating-section">
-        <dv-border-box-8 class="floating-card data-overview" :color="['#4fd2dd', '#235fa7']">
+        <FloatingCard class="data-overview">
           <h3 class="section-title">数据总览</h3>
           
           <!-- 核心指标 -->
@@ -123,82 +121,44 @@
             </div>
           </div>
           
-        </dv-border-box-8>
+        </FloatingCard>
         
         <!-- 实时环境数据图表 -->
-        <dv-border-box-8 class="floating-card environment-chart" :color="['#4fd2dd', '#235fa7']">
+        <FloatingCard class="environment-chart">
           <h3 class="section-title">24小时环境趋势</h3>
           <div class="chart-container">
             <div ref="environmentChart" class="environment-chart"></div>
           </div>
-        </dv-border-box-8>
+        </FloatingCard>
       </section>
     </main>
 
-    <!-- 底部：地图导航标记点 -->
-    <footer class="homepage-footer">
-      <div class="quick-nav">
-        <div class="nav-item" @click="focusMapLocation('seedling-factory')">
-          <div class="nav-icon">🏭</div>
-          <span>育秧工厂</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('rice-field')">
-          <div class="nav-icon">🌾</div>
-          <span>水稻田</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('orchard')">
-          <div class="nav-icon">🍎</div>
-          <span>果园</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('greenhouse')">
-          <div class="nav-icon">🏠</div>
-          <span>大棚</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('bird-monitoring')">
-          <div class="nav-icon">🦅</div>
-          <span>鸟类监测点</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('water-quality')">
-          <div class="nav-icon">💧</div>
-          <span>河道水质点</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('cold-storage')">
-          <div class="nav-icon">❄️</div>
-          <span>冷库</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('farm-machinery')">
-          <div class="nav-icon">🚜</div>
-          <span>农机</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('wetland-education')">
-          <div class="nav-icon">🎓</div>
-          <span>湿地宣教区</span>
-        </div>
-        <div class="nav-item" @click="focusMapLocation('bird-watching')">
-          <div class="nav-icon">🔭</div>
-          <span>观鸟区</span>
-        </div>
-      </div>
-    </footer>
+
+      <!-- 高德地图背景 -->
+      <WetlandMap 
+        ref="wetlandMapRef"
+        :show-navigation="true"
+        @map-ready="onMapReady"
+        @location-focused="onLocationFocused"
+      />
      </div>
-   </dv-full-screen-container>
+   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import AMapLoader from '@amap/amap-jsapi-loader'
 import UnifiedHeader from '@/components/UnifiedHeader.vue'
+import WetlandMap from '@/components/WetlandMap.vue'
+import FloatingCard from '@/components/FloatingCard.vue'
 import * as echarts from 'echarts'
 
 const router = useRouter()
 const route = useRoute()
 const currentDate = ref('')
 
-// 地图相关
-const mapContainer = ref<HTMLDivElement | null>(null)
-const map = ref<any>(null)
-const AMap = ref<any>(null)
+// 地图组件引用
+const wetlandMapRef = ref<InstanceType<typeof WetlandMap> | null>(null)
 const chartCanvas = ref<HTMLCanvasElement | null>(null)
 
 // ECharts相关
@@ -209,43 +169,13 @@ let zoneChartInstance: echarts.ECharts | null = null
 let wetlandChartInstance: echarts.ECharts | null = null
 let environmentChartInstance: echarts.ECharts | null = null
 
-// 初始化高德地图
-const initMap = async () => {
-  try {
-    const amap = await AMapLoader.load({
-      key: 'b7997390caeb35723dd42e55c1c3da51', // 需要替换为实际的高德地图API Key
-      version: '2.0',
-      plugins: ['AMap.Scale']
-    })
-    
-    AMap.value = amap
-    
-    // 创建地图实例 - 天福国家湿地公园位置
-    map.value = new amap.Map(mapContainer.value, {
-      viewMode: '2D',
-      zoom: 15,
-      center: [120.9853, 31.2891], // 天福湿地公园大概位置（江苏昆山）
-      mapStyle: 'amap://styles/blue', // 使用蓝色主题
-      showLabel: true, // 显示地图标注
-      showRoad: true, // 显示道路
-      showBuilding: true, // 显示建筑
-      features: ['bg', 'road', 'building', 'point'] // 显示背景、道路、建筑、兴趣点
-    })
-    
-    // 添加比例尺控件
-    map.value.addControl(new amap.Scale())
-    
-    // 添加工具栏控件到左下角
-    map.value.addControl(new amap.ToolBar({
-      position: {
-        bottom: '20px',
-        left: '20px'
-      }
-    }))
-    
-  } catch (error) {
-    console.error('地图加载失败:', error)
-  }
+// 地图组件事件处理
+const onMapReady = (mapInstance: any) => {
+  console.log('地图组件已准备就绪:', mapInstance)
+}
+
+const onLocationFocused = (locationKey: string, location: any) => {
+  console.log('聚焦到位置:', locationKey, location)
 }
 
 // 模拟数据
@@ -281,73 +211,9 @@ const navigateTo = (path: string) => {
   router.push(path)
 }
 
-// 地图标记点位置定义
-const mapLocations = {
-  'seedling-factory': { lng: 120.9298, lat: 31.3889, name: '育秧工厂' },
-  'rice-field': { lng: 120.9320, lat: 31.3870, name: '水稻田' },
-  'orchard': { lng: 120.9280, lat: 31.3900, name: '果园' },
-  'greenhouse': { lng: 120.9310, lat: 31.3880, name: '大棚' },
-  'bird-monitoring': { lng: 120.9290, lat: 31.3910, name: '鸟类监测点' },
-  'water-quality': { lng: 120.9330, lat: 31.3860, name: '河道水质点' },
-  'cold-storage': { lng: 120.9270, lat: 31.3890, name: '冷库' },
-  'farm-machinery': { lng: 120.9300, lat: 31.3875, name: '农机' },
-  'wetland-education': { lng: 120.9285, lat: 31.3895, name: '湿地宣教区' },
-  'bird-watching': { lng: 120.9315, lat: 31.3885, name: '观鸟区' }
-}
 
-// 地图标记点聚焦功能
-const focusMapLocation = (locationKey: keyof typeof mapLocations) => {
-  if (!map.value || !AMap.value) {
-    console.warn('地图未初始化')
-    return
-  }
-  
-  const location = mapLocations[locationKey]
-  if (!location) {
-    console.warn('未找到指定位置:', locationKey)
-    return
-  }
-  
-  if (!map.value || !AMap.value) {
-    console.warn('地图未初始化')
-    return
-  }
-  
-  // 设置地图中心点和缩放级别
-  map.value.setZoomAndCenter(16, [location.lng, location.lat])
-  
-  // 清除之前的标记点
-  map.value.clearMap()
-  
-  // 添加标记点
-  const marker = new AMap.value.Marker({
-    position: [location.lng, location.lat],
-    title: location.name,
-    icon: new AMap.value.Icon({
-      size: new AMap.value.Size(32, 32),
-      image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png'
-    })
-  })
-  
-  // 添加新标记点
-  map.value.add(marker)
-  
-  // 添加信息窗体
-  const infoWindow = new AMap.value.InfoWindow({
-    content: `<div style="padding: 10px;"><h4>${location.name}</h4><p>经度: ${location.lng}</p><p>纬度: ${location.lat}</p></div>`,
-    offset: new AMap.value.Pixel(0, -30)
-  })
-  
-  // 点击标记点显示信息窗体
-  marker.on('click', () => {
-    infoWindow.open(map.value, marker.getPosition())
-  })
-  
-  // 自动显示信息窗体
-  setTimeout(() => {
-    infoWindow.open(map.value, marker.getPosition())
-  }, 500)
-}
+
+
 
 const drawChart = () => {
   if (!chartCanvas.value) return
@@ -756,7 +622,6 @@ const initEnvironmentChart = () => {
 onMounted(async () => {
   // 页面初始化逻辑
   await nextTick()
-  initMap()
   drawChart()
   
   // 延迟初始化图表，确保容器已渲染
@@ -770,9 +635,6 @@ onMounted(async () => {
 // 当从其他页面返回首页时重新初始化
 onActivated(async () => {
   await nextTick()
-  if (!map.value && mapContainer.value) {
-    initMap()
-  }
   if (!zoneChartInstance && zoneChart.value) {
     initZoneChart()
   }
@@ -781,16 +643,6 @@ onActivated(async () => {
   }
   if (!environmentChartInstance && environmentChart.value) {
     initEnvironmentChart()
-  }
-})
-
-// 监听路由变化，确保在首页时地图正常显示
-watch(() => route.path, async (newPath) => {
-  if (newPath === '/' && mapContainer.value && !map.value) {
-    await nextTick()
-    setTimeout(() => {
-      initMap()
-    }, 200)
   }
 })
 
@@ -815,10 +667,6 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   
   // 页面清理逻辑
-  if (map.value) {
-    map.value.destroy()
-    map.value = null
-  }
   if (zoneChartInstance) {
     zoneChartInstance.dispose()
     zoneChartInstance = null
@@ -855,7 +703,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 0;
 }
 
 /* 地图遮罩层 */
@@ -876,12 +724,15 @@ onUnmounted(() => {
 
 // 主内容
 .homepage-main {
-  position: relative;
+  position: absolute;
+  top: 150px;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 10;
   display: flex;
   padding: 20px;
   gap: 20px;
-  flex: 1;
   overflow: hidden;
   pointer-events: none;
 }
@@ -920,27 +771,7 @@ onUnmounted(() => {
   padding-bottom: 20px;
 }
 
-/* 悬浮卡片样式 */
-.floating-card {
-    background: rgba(15, 25, 45, 0.75);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(64, 158, 255, 0.3);
-    border-radius: 16px;
-    padding: 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    height: fit-content;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    
-    &:hover {
-      transform: translateY(-4px);
-      background: rgba(15, 25, 45, 0.85);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-      border-color: rgba(64, 158, 255, 0.5);
-    }
-  }
+/* 悬浮卡片样式现在由FloatingCard组件提供 */
 
 .section-title {
   font-size: 18px;
@@ -956,7 +787,7 @@ onUnmounted(() => {
 
 // 湿地概况
 .wetland-overview {
-  background: rgba(15, 25, 45, 0.75);
+  background: rgba(15, 25, 45, 0.3);
   border: 1px solid rgba(64, 158, 255, 0.3);
   border-radius: 16px;
   padding: 16px;
@@ -982,9 +813,7 @@ onUnmounted(() => {
       width: 600px;
     }
     
-    .floating-card {
-      padding: 28px;
-    }
+    /* FloatingCard组件自带响应式样式 */
     
     .section-title {
       font-size: 20px;
@@ -1043,7 +872,7 @@ onUnmounted(() => {
 }
 
 .zone-map {
-  background: rgba(15, 25, 45, 0.75);
+  background: rgba(15, 25, 45, 0.3);
   border: 1px solid rgba(74, 144, 226, 0.3);
   border-radius: 16px;
   padding: 16px;
@@ -1069,7 +898,7 @@ onUnmounted(() => {
 
 // 发展理念
 .development-concept {
-  background: rgba(15, 25, 45, 0.75);
+  background: rgba(15, 25, 45, 0.3);
   border: 1px solid rgba(126, 211, 33, 0.3);
   border-radius: 16px;
   padding: 24px;
@@ -1118,7 +947,7 @@ onUnmounted(() => {
 
 // 数据总览
 .data-overview {
-  background: rgba(15, 25, 45, 0.75);
+  background: rgba(15, 25, 45, 0.2);
   border: 1px solid rgba(74, 144, 226, 0.3);
   border-radius: 16px;
   padding: 24px;
@@ -1309,7 +1138,7 @@ onUnmounted(() => {
   .chart-container {
     background: rgba(12, 20, 38, 0.4);
     border-radius: 8px;
-    padding: 15px;
+    padding: 5px;
     
     .environment-chart {
       width: 100%;
@@ -1333,6 +1162,8 @@ onUnmounted(() => {
     pointer-events: auto;
   }
 }
+
+
 
 .quick-nav {
   display: flex;

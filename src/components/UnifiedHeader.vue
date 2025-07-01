@@ -15,31 +15,45 @@
       
       <nav class="nav-menu">
         <div class="nav-item" :class="{ active: currentPath === '/' }" @click="navigateTo('/')">
-          <div class="nav-icon">🏠</div>
+          <div class="nav-icon home-icon">
+            <SvgIcon name="home" :size="28" color="#ffffff" />
+          </div>
           <span>首页概览</span>
         </div>
         <div class="nav-item" :class="{ active: currentPath === '/agriculture' }" @click="navigateTo('/agriculture')">
-          <div class="nav-icon">🌾</div>
+          <div class="nav-icon agriculture-icon">
+            <SvgIcon name="agriculture" :size="28" color="#ffffff" />
+          </div>
           <span>智慧农业</span>
         </div>
         <div class="nav-item" :class="{ active: currentPath === '/quality' }" @click="navigateTo('/quality')">
-          <div class="nav-icon">✅</div>
+          <div class="nav-icon quality-icon">
+            <SvgIcon name="quality" :size="28" color="#ffffff" />
+          </div>
           <span>绿色认证</span>
         </div>
         <div class="nav-item" :class="{ active: currentPath === '/industry' }" @click="navigateTo('/industry')">
-          <div class="nav-icon">🚜</div>
+          <div class="nav-icon industry-icon">
+            <SvgIcon name="industry" :size="28" color="#ffffff" />
+          </div>
           <span>智能育秧</span>
         </div>
         <div class="nav-item" :class="{ active: currentPath === '/ecology' }" @click="navigateTo('/ecology')">
-          <div class="nav-icon">🦅</div>
+          <div class="nav-icon ecology-icon">
+            <SvgIcon name="ecology" :size="28" color="#ffffff" />
+          </div>
           <span>生态监测</span>
         </div>
         <div class="nav-item" :class="{ active: currentPath === '/education' }" @click="navigateTo('/education')">
-          <div class="nav-icon">📚</div>
+          <div class="nav-icon education-icon">
+            <SvgIcon name="education" :size="28" color="#ffffff" />
+          </div>
           <span>科普研学</span>
         </div>
         <div class="nav-item" v-if="0" :class="{ active: currentPath === '/maintenance' }" @click="navigateTo('/maintenance')">
-          <div class="nav-icon">⚙️</div>
+          <div class="nav-icon">
+            <SvgIcon name="maintenance" :size="20" color="#ffffff" />
+          </div>
           <span>运维预警</span>
         </div>
       </nav>
@@ -59,6 +73,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import SvgIcon from './SvgIcon.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -188,6 +203,12 @@ onUnmounted(() => {
       border-color: #4A90E2;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+      
+      .nav-icon {
+        background: rgba(74, 144, 226, 0.3);
+        transform: scale(1.05);
+        filter: drop-shadow(0 4px 8px rgba(74, 144, 226, 0.6));
+      }
     }
     
     &.active {
@@ -196,8 +217,39 @@ onUnmounted(() => {
     }
     
     .nav-icon {
-      font-size: 20px;
-      filter: drop-shadow(0 0 5px rgba(74, 144, 226, 0.5));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(126, 211, 33, 0.2));
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 2px 6px rgba(74, 144, 226, 0.4));
+    }
+    
+    .home-icon {
+      background: linear-gradient(135deg, #4A90E2, #7ED321);
+    }
+    
+    .agriculture-icon {
+      background: linear-gradient(135deg, #7ED321, #F5A623);
+    }
+    
+    .quality-icon {
+      background: linear-gradient(135deg, #50E3C2, #4A90E2);
+    }
+    
+    .industry-icon {
+      background: linear-gradient(135deg, #F5A623, #D0021B);
+    }
+    
+    .ecology-icon {
+      background: linear-gradient(135deg, #7ED321, #50E3C2);
+    }
+    
+    .education-icon {
+      background: linear-gradient(135deg, #9013FE, #4A90E2);
     }
     
     span {

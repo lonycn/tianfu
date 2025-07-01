@@ -1178,7 +1178,7 @@ onUnmounted(() => {
   .chart-container {
     background: rgba(12, 20, 38, 0.4);
     border-radius: 8px;
-    padding: 15px;
+    padding: 5px;
     margin-bottom: 15px;
     display: flex;
     justify-content: center;
