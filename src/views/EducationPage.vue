@@ -1,5 +1,5 @@
 <template>
-  <dv-full-screen-container>
+  <div>
     <div class="education-page">
       <!-- 背景动画 -->
       <div class="bg-animation">
@@ -117,7 +117,7 @@
         </section>
       </main>
     </div>
-  </dv-full-screen-container>
+  </div>
 </template>
 
 <script setup lang="ts">

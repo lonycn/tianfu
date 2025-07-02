@@ -1,0 +1,148 @@
+{
+  "mapIcons": [
+  {
+    "id": "1751366813871",
+    "name": "观鸟区",
+    "emoji": "🦅",
+    "position": {
+      "lng": 121.129437,
+      "lat": 31.343447
+    },
+    "category": "education",
+    "description": "观鸟区域",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751370367321",
+    "name": "育秧工厂",
+    "emoji": "🏭",
+    "position": {
+      "lng": 121.096178,
+      "lat": 31.337912
+    },
+    "category": "agriculture",
+    "description": "育秧工厂",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372672716",
+    "name": "农机",
+    "emoji": "🚜",
+    "position": {
+      "lng": 121.126218,
+      "lat": 31.343264
+    },
+    "category": "storage",
+    "description": "智慧农机",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372716051",
+    "name": "水质检测",
+    "emoji": "💧",
+    "position": {
+      "lng": 121.122485,
+      "lat": 31.337252
+    },
+    "category": "other",
+    "description": "水质检测站",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372771386",
+    "name": "稻田监测站",
+    "emoji": "🌾",
+    "position": {
+      "lng": 121.127849,
+      "lat": 31.342457
+    },
+    "category": "monitoring",
+    "description": "稻田监测站",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372801735",
+    "name": "果园",
+    "emoji": "🍎",
+    "position": {
+      "lng": 121.118022,
+      "lat": 31.339965
+    },
+    "category": "other",
+    "description": "智慧果园",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372825187",
+    "name": "育苗区",
+    "emoji": "🌱",
+    "position": {
+      "lng": 121.100684,
+      "lat": 31.339158
+    },
+    "category": "agriculture",
+    "description": "育苗区",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  },
+  {
+    "id": "1751372843855",
+    "name": "冷库",
+    "emoji": "❄️",
+    "position": {
+      "lng": 121.118923,
+      "lat": 31.34308
+    },
+    "category": "monitoring",
+    "description": "智慧冷库",
+    "visible": true,
+    "iconStyle": {
+      "size": 32,
+      "backgroundColor": "rgba(255, 255, 255, 0.9)",
+      "borderRadius": "6px",
+      "boxShadow": "0 2px 4px rgba(0, 0, 0, 0.1)"
+    }
+  }
+]
+}

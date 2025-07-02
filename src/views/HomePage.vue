@@ -1168,63 +1168,168 @@ onUnmounted(() => {
 .quick-nav {
   display: flex;
   justify-content: space-around;
-  flex-wrap: wrap;
-  background: rgba(15, 25, 45, 0.85);
-  border: 1px solid rgba(64, 158, 255, 0.3);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
-  padding: 8px 12px;
-  max-width: 900px;
+  flex-wrap: nowrap;
+  background: linear-gradient(135deg, 
+    rgba(15, 25, 45, 0.95) 0%, 
+    rgba(25, 35, 55, 0.9) 50%, 
+    rgba(15, 25, 45, 0.95) 100%);
+  border: 2px solid transparent;
+  border-image: linear-gradient(135deg, 
+    rgba(64, 158, 255, 0.6), 
+    rgba(126, 211, 33, 0.4), 
+    rgba(245, 166, 35, 0.5)) 1;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  padding: 12px 16px;
+  max-width: 1000px;
   width: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  gap: 6px;
-  transition: all 0.3s ease;
+  min-width: fit-content;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 20px rgba(64, 158, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  gap: 8px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.1), 
+      transparent);
+    transition: left 0.6s ease;
+  }
   
   &:hover {
-    background: rgba(15, 25, 45, 0.95);
-    border-color: rgba(64, 158, 255, 0.5);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, 
+      rgba(25, 35, 55, 0.98) 0%, 
+      rgba(35, 45, 65, 0.95) 50%, 
+      rgba(25, 35, 55, 0.98) 100%);
+    border-image: linear-gradient(135deg, 
+      rgba(64, 158, 255, 0.8), 
+      rgba(126, 211, 33, 0.6), 
+      rgba(245, 166, 35, 0.7)) 1;
+    box-shadow: 
+      0 16px 50px rgba(0, 0, 0, 0.5),
+      0 8px 30px rgba(64, 158, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    
+    &::before {
+      left: 100%;
+    }
   }
   
   .nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 6px;
-    border-radius: 6px;
+    gap: 6px;
+    padding: 12px 8px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
-    min-width: 65px;
-    max-width: 85px;
+    min-width: 70px;
+    max-width: 90px;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+        rgba(74, 144, 226, 0.1), 
+        rgba(126, 211, 33, 0.05));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: 12px;
+    }
     
     &:hover {
-      background: rgba(74, 144, 226, 0.2);
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, 
+        rgba(74, 144, 226, 0.25), 
+        rgba(126, 211, 33, 0.15));
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 
+        0 8px 25px rgba(74, 144, 226, 0.3),
+        0 4px 15px rgba(0, 0, 0, 0.2);
+      
+      &::before {
+        opacity: 1;
+      }
+      
+      .nav-icon {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 8px rgba(74, 144, 226, 0.6));
+      }
+      
+      span {
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+      }
     }
     
     .nav-icon {
-      font-size: 20px;
+      font-size: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     }
     
     span {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.85);
       text-align: center;
-      line-height: 1.2;
+      line-height: 1.3;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       width: 100%;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
   }
   
   @media (max-width: 768px) {
+    padding: 10px 12px;
+    gap: 6px;
+    
     .nav-item {
       min-width: 60px;
-      max-width: 80px;
+      max-width: 75px;
       padding: 10px 6px;
+      gap: 4px;
+      
+      .nav-icon {
+        font-size: 20px;
+      }
+      
+      span {
+        font-size: 10px;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    gap: 4px;
+    
+    .nav-item {
+      min-width: 55px;
+      max-width: 70px;
+      padding: 8px 4px;
       
       .nav-icon {
         font-size: 18px;

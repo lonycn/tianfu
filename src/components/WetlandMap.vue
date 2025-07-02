@@ -6,17 +6,14 @@
     <!-- 地图导航标记点 -->
     <div class="map-navigation" v-if="showNavigation">
       <div class="quick-nav">
-        <div 
-          v-for="(location, key) in mapLocations" 
-          :key="key"
-          class="nav-item" 
-          @click="flyToLocation(key)"
-        >
-          <div class="nav-icon">
-            {{ getLocationEmoji(key) }}
-          </div>
-          <span>{{ location.name }}</span>
-        </div>
+        <QuickNavItem
+          v-for="icon in mapIcons"
+          :key="icon.id"
+          :emoji="icon.emoji"
+          :label="icon.name"
+          :location-key="icon.id"
+          @click="flyToLocation"
+        />
       </div>
     </div>
   </div>
@@ -26,7 +23,8 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import mapBoundariesData from '@/data/mapBoundaries.json'
-import SvgIcon from './SvgIcon.vue'
+import mapIconsData from '@/data/mapIcons.json'
+import QuickNavItem from './QuickNavItem.vue'
 
 // Props
 interface Props {
@@ -58,19 +56,11 @@ const AMap = ref<any>(null)
 const mapBoundaries = ref(mapBoundariesData)
 const boundaryPolygons = ref<any[]>([])
 
-// 地图标记点位置定义
-const mapLocations = {
-  'seedling-factory': { lng: 120.9298, lat: 31.3889, name: '育秧工厂' },
-  'rice-field': { lng: 120.9320, lat: 31.3870, name: '水稻田' },
-  'orchard': { lng: 120.9280, lat: 31.3900, name: '果园' },
-  'greenhouse': { lng: 120.9310, lat: 31.3880, name: '大棚' },
-  'bird-monitoring': { lng: 120.9290, lat: 31.3910, name: '鸟类监测点' },
-  'water-quality': { lng: 120.9330, lat: 31.3860, name: '河道水质点' },
-  'cold-storage': { lng: 120.9270, lat: 31.3890, name: '冷库' },
-  'farm-machinery': { lng: 120.9300, lat: 31.3875, name: '农机' },
-  'wetland-education': { lng: 120.9285, lat: 31.3895, name: '湿地宣教区' },
-  'bird-watching': { lng: 120.9315, lat: 31.3885, name: '观鸟区' }
-}
+// 地图图标相关
+const mapIcons = ref(mapIconsData.mapIcons)
+const iconMarkers = ref<any[]>([])
+
+
 
 // 区域名称样式配置
 const areaNameStyles = {
@@ -174,6 +164,9 @@ const initMap = async () => {
     
     // 初始化地图边界
     initMapBoundaries()
+    
+    // 初始化地图图标
+    initMapIcons()
     
     // 触发地图准备就绪事件
     emit('mapReady', map.value)
@@ -318,22 +311,129 @@ const clearBoundaries = () => {
   boundaryPolygons.value = []
 }
 
-// 获取位置对应的emoji表情
-const getLocationEmoji = (locationKey: string) => {
-  const emojiMap: { [key: string]: string } = {
-    'bird-monitoring': '🦅',
-    'water-quality': '💧',
-    'vegetation': '🌿',
-    'weather': '🌤️',
-    'soil': '🌱',
-    'air-quality': '💨'
-  }
-  return emojiMap[locationKey] || '📍'
-}
+
 
 // 飞行到指定位置
 const flyToLocation = (locationKey: string) => {
-  focusMapLocation(locationKey as keyof typeof mapLocations)
+  const icon = mapIcons.value.find(icon => icon.id === locationKey)
+  if (icon && map.value) {
+    // 关闭所有现有的信息窗体
+    map.value.clearInfoWindow()
+    
+    map.value.setZoomAndCenter(16, [icon.position.lng, icon.position.lat])
+    
+    // 触发位置聚焦事件
+    emit('locationFocused', locationKey, icon)
+  }
+}
+
+// 初始化地图图标
+const initMapIcons = () => {
+  if (!map.value) {
+    console.warn('地图未初始化，无法加载图标')
+    return
+  }
+  
+  const AMapClass = (window as any).AMap
+  if (!AMapClass) {
+    console.warn('AMap类未加载，无法创建图标')
+    return
+  }
+  
+  console.log('开始初始化地图图标，图标数据：', mapIcons.value)
+  
+  // 清除现有图标
+  clearIcons()
+  
+  // 添加所有可见图标
+  mapIcons.value.forEach((icon, index) => {
+    if (icon.visible) {
+      console.log('添加图标：', icon.name)
+      addIconToMap(icon, index)
+    }
+  })
+}
+
+// 添加图标到地图
+const addIconToMap = (icon: any, index: number) => {
+  console.log('开始添加图标到地图：', icon)
+  
+  if (!map.value) {
+    console.error('地图对象不存在')
+    return
+  }
+  
+  const AMapClass = (window as any).AMap
+  if (!AMapClass) {
+    console.error('AMap 未加载')
+    return
+  }
+  
+  try {
+    // 创建自定义图标标记
+    const marker = new AMapClass.Marker({
+      position: [icon.position.lng, icon.position.lat],
+      content: `<div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: ${icon.iconStyle.size}px;
+        height: ${icon.iconStyle.size}px;
+        font-size: ${icon.iconStyle.size * 0.6}px;
+        background: ${icon.iconStyle.backgroundColor};
+        border-radius: ${icon.iconStyle.borderRadius};
+        box-shadow: ${icon.iconStyle.boxShadow};
+        cursor: pointer;
+        transition: all 0.3s ease;
+      ">${icon.emoji}</div>`,
+      offset: new AMapClass.Pixel(-16, -16)
+    })
+    
+    console.log('图标标记创建成功：', marker)
+    
+    // 添加到地图
+    map.value.add(marker)
+    
+    // 添加点击事件
+    marker.on('click', () => {
+      flyToLocation(icon.id)
+      
+      // 关闭所有现有的信息窗体
+      map.value.clearInfoWindow()
+      
+      // 显示信息窗体（不显示经纬度）
+      const infoWindow = new AMapClass.InfoWindow({
+        content: `<div style="padding: 10px;">
+          <h4 style="margin: 0 0 8px 0; color: #333;">${icon.emoji} ${icon.name}</h4>
+          <p style="margin: 0; color: #666; font-size: 12px;">${icon.description}</p>
+        </div>`,
+        offset: new AMapClass.Pixel(0, -30)
+      })
+      
+      infoWindow.open(map.value, marker.getPosition())
+    })
+    
+    // 保存到数组中
+    iconMarkers.value.push({
+      id: icon.id,
+      marker: marker,
+      icon: icon
+    })
+    
+    console.log('图标已添加')
+  } catch (error) {
+    console.error('添加图标时出错：', error)
+  }
+}
+
+// 清除所有图标
+const clearIcons = () => {
+  iconMarkers.value.forEach(item => {
+    if (item.marker) {
+      map.value.remove(item.marker)
+    }
+  })
+  iconMarkers.value = []
 }
 
 // 地图标记点聚焦功能
@@ -371,9 +471,12 @@ const focusMapLocation = (locationKey: keyof typeof mapLocations) => {
   // 添加新标记点
   map.value.add(marker)
   
-  // 添加信息窗体
+  // 关闭所有现有的信息窗体
+  map.value.clearInfoWindow()
+  
+  // 添加信息窗体（不显示经纬度）
   const infoWindow = new AMapClass.InfoWindow({
-    content: `<div style="padding: 10px;"><h4>${location.name}</h4><p>经度: ${location.lng}</p><p>纬度: ${location.lat}</p></div>`,
+    content: `<div style="padding: 10px;"><h4>${location.name}</h4><p>${location.description || '地图标记点'}</p></div>`,
     offset: new AMapClass.Pixel(0, -30)
   })
   
@@ -395,8 +498,12 @@ const focusMapLocation = (locationKey: keyof typeof mapLocations) => {
 defineExpose({
   map,
   focusMapLocation,
+  flyToLocation,
   clearBoundaries,
-  initMapBoundaries
+  initMapBoundaries,
+  clearIcons,
+  initMapIcons,
+  mapIcons
 })
 
 // 生命周期
@@ -406,6 +513,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   // 清理地图资源
+  clearBoundaries()
+  clearIcons()
   if (map.value) {
     map.value.destroy()
   }
@@ -438,14 +547,21 @@ onUnmounted(() => {
 
 .quick-nav {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   background: rgba(0, 0, 0, 0.7);
-  padding: 10px;
-  border-radius: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
   backdrop-filter: blur(10px);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  max-width: 800px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.quick-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-item {
@@ -471,13 +587,23 @@ onUnmounted(() => {
 }
 
 .nav-item .nav-icon {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
     margin-right: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
 .nav-item:hover .nav-icon {
-    transform: scale(1.2);
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
 .nav-icon {
@@ -494,22 +620,22 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .quick-nav {
-    max-width: 90vw;
-    gap: 8px;
-    padding: 8px;
+    max-width: 95vw;
+    gap: 4px;
+    padding: 4px 6px;
   }
   
   .nav-item {
-    padding: 6px 8px;
-    min-width: 50px;
+    padding: 3px 6px;
+    min-width: 40px;
   }
   
   .nav-icon {
-    font-size: 16px;
+    font-size: 12px;
   }
   
   .nav-item span {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 </style>
