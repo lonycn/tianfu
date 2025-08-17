@@ -93,7 +93,9 @@ const updateTime = () => {
 }
 
 const navigateTo = (path: string) => {
-  router.push(path)
+  router.push(path).catch(err => {
+    console.error('Navigation error:', err)
+  })
 }
 
 let timeInterval: NodeJS.Timeout | null = null

@@ -88,10 +88,17 @@
                   class="calendar-day" 
                   v-for="date in calendarDates" 
                   :key="date.date"
-                  :class="{ 'has-course': date.hasCourse, 'today': date.isToday }"
+                  :class="{ 
+                    'has-course': date.hasCourse, 
+                    'today': date.isToday,
+                    'other-month': !date.isCurrentMonth
+                  }"
                 >
                   <span class="date-number">{{ date.day }}</span>
-                  <div class="course-indicator" v-if="date.hasCourse"></div>
+                  <div class="course-info" v-if="date.hasCourse">
+                    <div class="course-icon">{{ date.courseIcon }}</div>
+                    <div class="course-title">{{ date.courseTitle }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -196,27 +203,93 @@ const educationStats = ref([
   }
 ])
 
-// 当前月份
-const currentMonth = ref('2024年12月')
+// 当前月份和日历数据
+const currentMonth = ref('')
+const calendarDates = ref([])
 
 // 星期标题
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 
-// 日历数据
-const calendarDates = ref([
-  { date: '2024-12-01', day: 1, hasCourse: true, isToday: false },
-  { date: '2024-12-02', day: 2, hasCourse: false, isToday: false },
-  { date: '2024-12-03', day: 3, hasCourse: true, isToday: false },
-  { date: '2024-12-04', day: 4, hasCourse: false, isToday: false },
-  { date: '2024-12-05', day: 5, hasCourse: true, isToday: false },
-  { date: '2024-12-06', day: 6, hasCourse: false, isToday: false },
-  { date: '2024-12-07', day: 7, hasCourse: false, isToday: false },
-  { date: '2024-12-08', day: 8, hasCourse: true, isToday: false },
-  { date: '2024-12-09', day: 9, hasCourse: false, isToday: false },
-  { date: '2024-12-10', day: 10, hasCourse: true, isToday: true },
-  { date: '2024-12-11', day: 11, hasCourse: false, isToday: false },
-  { date: '2024-12-12', day: 12, hasCourse: true, isToday: false }
-])
+// 课程数据
+const courseData = {
+  湿地生态探索: { title: '湿地生态探索', type: 'nature', icon: '🌿' },
+  智慧农业体验: { title: '智慧农业体验', type: 'tech', icon: '🚜' },
+  环保实践课堂: { title: '环保实践课堂', type: 'environmental', icon: '♻️' },
+  鸟类观察学习: { title: '鸟类观察学习', type: 'nature', icon: '🦅' },
+  水质监测实验: { title: '水质监测实验', type: 'science', icon: '🔬' },
+  植物标本制作: { title: '植物标本制作', type: 'craft', icon: '🌱' },
+  生态摄影教学: { title: '生态摄影教学', type: 'art', icon: '📸' },
+  农业科技参观: { title: '农业科技参观', type: 'tech', icon: '🏭' },
+  户外生存技能: { title: '户外生存技能', type: 'survival', icon: '🏕️' },
+  科学实验课堂: { title: '科学实验课堂', type: 'science', icon: '⚗️' }
+}
+
+// 生成当前月份的日历
+const generateCalendar = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  
+  // 更新当前月份显示
+  currentMonth.value = `${year}年${month + 1}月`
+  
+  // 获取当前月份的第一天和最后一天
+  const firstDay = new Date(year, month, 1)
+  const lastDay = new Date(year, month + 1, 0)
+  const today = now.getDate()
+  
+  // 获取第一天是星期几
+  const firstDayWeek = firstDay.getDay()
+  
+  // 清空日历数据
+  const dates = []
+  
+  // 添加上个月的日期（用于填充）
+  for (let i = firstDayWeek - 1; i >= 0; i--) {
+    const prevDate = new Date(year, month, -i)
+    dates.push({
+      date: prevDate.toISOString().split('T')[0],
+      day: prevDate.getDate(),
+      hasCourse: false,
+      isToday: false,
+      isCurrentMonth: false,
+      courseTitle: ''
+    })
+  }
+  
+  // 添加当前月份的日期
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const hasCourse = Math.random() > 0.6 // 40%的概率有课程
+    const courseNames = Object.keys(courseData)
+    const randomCourse = courseNames[Math.floor(Math.random() * courseNames.length)]
+    
+    dates.push({
+      date: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+      day: day,
+      hasCourse: hasCourse,
+      isToday: day === today,
+      isCurrentMonth: true,
+      courseTitle: hasCourse ? courseData[randomCourse].title : '',
+      courseIcon: hasCourse ? courseData[randomCourse].icon : ''
+    })
+  }
+  
+  // 添加下个月的日期（用于填充到42个格子）
+  const remainingDays = 42 - dates.length
+  for (let day = 1; day <= remainingDays; day++) {
+    const nextDate = new Date(year, month + 1, day)
+    dates.push({
+      date: nextDate.toISOString().split('T')[0],
+      day: day,
+      hasCourse: false,
+      isToday: false,
+      isCurrentMonth: false,
+      courseTitle: ''
+    })
+  }
+  
+  calendarDates.value = dates
+}
 
 // 教学资源数据
 const teachingResources = ref([
@@ -270,7 +343,8 @@ const getParticleStyle = (index: number) => {
 }
 
 onMounted(() => {
-  // 页面初始化逻辑
+  // 生成当前月份日历
+  generateCalendar()
 })
 
 onUnmounted(() => {
@@ -347,7 +421,7 @@ onUnmounted(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  padding: 20px;
+  padding: 10px;
   flex: 1;
   overflow: hidden;
   
@@ -582,18 +656,22 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(74, 144, 226, 0.3);
   border-radius: 12px;
-  padding: 25px;
+  padding: 15px;
   backdrop-filter: blur(10px);
+  height: 450px;
+  overflow: hidden;
 }
 
 .schedule-calendar {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 20px;
+  padding: 10px;
+  height: calc(100% - 35px);
+  overflow: hidden;
 }
 
 .calendar-header {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .month-nav {
@@ -630,26 +708,28 @@ onUnmounted(() => {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 4px;
 }
 
 .day-header {
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   color: rgba(255, 255, 255, 0.7);
-  padding: 10px 5px;
+  padding: 5px 2px;
 }
 
 .calendar-day {
   position: relative;
-  aspect-ratio: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
+  padding: 2px;
+  height: 50px;
   
   &:hover {
     background: rgba(74, 144, 226, 0.2);
@@ -662,22 +742,50 @@ onUnmounted(() => {
   
   &.has-course {
     background: rgba(126, 211, 33, 0.2);
+    border: 1px solid rgba(126, 211, 33, 0.4);
+  }
+  
+  &.other-month {
+    opacity: 0.3;
+    
+    .date-number {
+      color: rgba(255, 255, 255, 0.4);
+    }
   }
 }
 
 .date-number {
-  font-size: 12px;
+  font-size: 10px;
   color: white;
+  font-weight: bold;
+  margin-bottom: 1px;
 }
 
-.course-indicator {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 6px;
-  height: 6px;
-  background: #7ED321;
-  border-radius: 50%;
+.course-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  width: 100%;
+  
+  .course-icon {
+    font-size: 12px;
+    margin-bottom: 1px;
+  }
+  
+  .course-title {
+    font-size: 7px;
+    color: #7ED321;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.1;
+    word-break: break-all;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 }
 
 // 教学资源样式
@@ -685,8 +793,10 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(74, 144, 226, 0.3);
   border-radius: 12px;
-  padding: 25px;
+  padding: 20px;
   backdrop-filter: blur(10px);
+  flex: 1;
+  overflow-y: auto;
 }
 
 .resources-list {

@@ -56,14 +56,14 @@
   },
   {
     "id": "1751372716051",
-    "name": "水质检测",
+    "name": "水质监测",
     "emoji": "💧",
     "position": {
       "lng": 121.122485,
       "lat": 31.337252
     },
     "category": "other",
-    "description": "水质检测站",
+    "description": "水质监测站",
     "visible": true,
     "iconStyle": {
       "size": 32,
@@ -74,14 +74,14 @@
   },
   {
     "id": "1751372771386",
-    "name": "稻田监测站",
+    "name": "稻田监测",
     "emoji": "🌾",
     "position": {
       "lng": 121.127849,
       "lat": 31.342457
     },
     "category": "monitoring",
-    "description": "稻田监测站",
+    "description": "稻田监测",
     "visible": true,
     "iconStyle": {
       "size": 32,

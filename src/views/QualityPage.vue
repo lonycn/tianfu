@@ -18,9 +18,9 @@
 
     <!-- 主内容 -->
     <main class="page-main">
-      <!-- 左侧：绿色认证概览 -->
-      <section class="left-section">
-        <!-- 认证基地统计 -->
+      <!-- 顶部区域：基地概览和质量检测统计 -->
+      <section class="top-section">
+        <!-- 绿色认证基地概览 -->
         <div class="certification-overview">
           <h2 class="section-title">绿色认证基地概览</h2>
           <div class="cert-stats">
@@ -50,114 +50,88 @@
           </div>
         </div>
         
-        <!-- 认证地图分布 -->
-        <div class="certification-map">
-          <h3 class="subsection-title">认证基地分布图</h3>
-          <div class="map-container">
-            <svg viewBox="0 0 500 350" class="cert-map-svg">
-              <!-- 背景区域 -->
-              <rect x="0" y="0" width="500" height="350" fill="#0c1426" stroke="#7ED321" stroke-width="1" opacity="0.3"/>
-              
-              <!-- 绿色大米基地 -->
-              <rect x="50" y="50" width="180" height="100" fill="#7ED321" opacity="0.4" rx="5"/>
-              <text x="140" y="75" fill="#7ED321" text-anchor="middle" font-size="12">绿色大米基地</text>
-              <text x="140" y="90" fill="#7ED321" text-anchor="middle" font-size="10">3000亩</text>
-              
-              <!-- 有机蔬菜基地 -->
-              <rect x="270" y="50" width="180" height="100" fill="#4A90E2" opacity="0.4" rx="5"/>
-              <text x="360" y="75" fill="#4A90E2" text-anchor="middle" font-size="12">有机蔬菜基地</text>
-              <text x="360" y="90" fill="#4A90E2" text-anchor="middle" font-size="10">340亩</text>
-              
-              <!-- 绿色果园基地 -->
-              <rect x="160" y="180" width="180" height="120" fill="#F5A623" opacity="0.4" rx="5"/>
-              <text x="250" y="205" fill="#F5A623" text-anchor="middle" font-size="12">绿色果园基地</text>
-              <text x="250" y="220" fill="#F5A623" text-anchor="middle" font-size="10">4031亩</text>
-              
-              <!-- 认证标识 -->
-              <g v-for="cert in certificationMarkers" :key="cert.id">
-                <circle 
-                  :cx="cert.x" 
-                  :cy="cert.y" 
-                  r="8" 
-                  :fill="cert.color"
-                  stroke="white"
-                  stroke-width="2"
-                />
-                <text 
-                  :x="cert.x" 
-                  :y="cert.y + 3" 
-                  fill="white" 
-                  text-anchor="middle" 
-                  font-size="8"
-                  font-weight="bold"
-                >✓</text>
-              </g>
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      <!-- 右侧：质量监管数据 -->
-      <section class="right-section">
         <!-- 质量检测统计 -->
         <div class="quality-stats">
           <h2 class="section-title">质量检测统计</h2>
-          <div class="stats-grid">
-            <div class="quality-card">
-              <div class="card-header">
-                <div class="card-icon">🏛️</div>
-                <div class="card-title">镇级抽检</div>
-              </div>
-              <div class="card-content">
-                <div class="main-metric">
-                  <span class="value">265</span>
-                  <span class="unit">批次</span>
+          <div class="stats-content">
+            <div class="stats-grid">
+              <div class="quality-card">
+                <div class="card-header">
+                  <div class="card-icon">🏛️</div>
+                  <div class="card-title">镇级抽检</div>
                 </div>
-                <div class="sub-metrics">
-                  <div class="sub-metric">
-                    <span class="label">合格率</span>
-                    <span class="value success">100%</span>
+                <div class="card-content">
+                  <div class="main-metric">
+                    <span class="value">265</span>
+                    <span class="unit">批次</span>
                   </div>
-                  <div class="sub-metric">
-                    <span class="label">本月新增</span>
-                    <span class="value">23批次</span>
+                  <div class="sub-metrics">
+                    <div class="sub-metric">
+                      <span class="label">合格率</span>
+                      <span class="value success">100%</span>
+                    </div>
+                    <div class="sub-metric">
+                      <span class="label">本月新增</span>
+                      <span class="value">23批次</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="quality-card">
+                <div class="card-header">
+                  <div class="card-icon">🏢</div>
+                  <div class="card-title">企业自检</div>
+                </div>
+                <div class="card-content">
+                  <div class="main-metric">
+                    <span class="value">279</span>
+                    <span class="unit">批次</span>
+                  </div>
+                  <div class="sub-metrics">
+                    <div class="sub-metric">
+                      <span class="label">合格率</span>
+                      <span class="value success">100%</span>
+                    </div>
+                    <div class="sub-metric">
+                      <span class="label">本月新增</span>
+                      <span class="value">31批次</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div class="quality-card">
-              <div class="card-header">
-                <div class="card-icon">🏢</div>
-                <div class="card-title">企业自检</div>
-              </div>
-              <div class="card-content">
-                <div class="main-metric">
-                  <span class="value">279</span>
-                  <span class="unit">批次</span>
-                </div>
-                <div class="sub-metrics">
-                  <div class="sub-metric">
-                    <span class="label">合格率</span>
-                    <span class="value success">100%</span>
-                  </div>
-                  <div class="sub-metric">
-                    <span class="label">本月新增</span>
-                    <span class="value">31批次</span>
-                  </div>
+            <!-- 合格率仪表盘 -->
+            <div class="compliance-gauge">
+              <h3 class="gauge-title">综合合格率</h3>
+              <div class="gauge-container">
+                <canvas ref="gaugeCanvas" width="120" height="120"></canvas>
+                <div class="gauge-value">
+                  <span class="percentage">100%</span>
+                  <span class="label">合格率</span>
                 </div>
               </div>
             </div>
           </div>
-          
-          <!-- 合格率仪表盘 -->
-          <div class="compliance-gauge">
-            <h3 class="gauge-title">综合合格率</h3>
-            <div class="gauge-container">
-              <canvas ref="gaugeCanvas" width="200" height="200"></canvas>
-              <div class="gauge-value">
-                <span class="percentage">100%</span>
-                <span class="label">合格率</span>
+        </div>
+      </section>
+
+      <!-- 中间区域：认证标识追踪和抽检趋势 -->
+      <section class="middle-section">
+        <!-- 认证标识追踪 -->
+        <div class="certification-tracking">
+          <h2 class="section-title">认证标识追踪</h2>
+          <div class="tracking-map">
+            <div class="map-container">
+              <div 
+                v-for="point in trackingPoints" 
+                :key="point.id"
+                class="tracking-point"
+                :style="{ left: point.x + '%', top: point.y + '%' }"
+              >
+                <div class="point-marker" :style="{ backgroundColor: point.color }"></div>
+                <div class="point-label">{{ point.name }}</div>
               </div>
             </div>
           </div>
@@ -167,7 +141,7 @@
         <div class="inspection-trends">
           <h3 class="subsection-title">月度抽检趋势</h3>
           <div class="chart-container">
-            <canvas ref="trendChart" width="400" height="200"></canvas>
+            <canvas ref="trendChart" width="350" height="160"></canvas>
           </div>
           <div class="chart-legend">
             <div class="legend-item">
@@ -180,43 +154,110 @@
             </div>
           </div>
         </div>
-        
-        <!-- 质量追溯平台 -->
-        <div class="traceability-platform">
+      </section>
+
+      <!-- 底部区域：质量追溯平台 -->
+      <section class="bottom-section">
+        <!-- 左侧：追溯码统计和流程图 -->
+        <div class="left-traceability">
           <h3 class="subsection-title">品质可追溯平台</h3>
-          <div class="platform-stats">
-            <div class="platform-item">
-              <div class="item-icon">📱</div>
-              <div class="item-content">
-                <div class="item-value">1,247</div>
-                <div class="item-label">入网监管主体</div>
+          
+          <!-- 追溯码统计 -->
+          <div class="traceability-stats">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-icon">📱</div>
+                <div class="stat-content">
+                  <div class="stat-value">1,247</div>
+                  <div class="stat-label">入网监管主体</div>
+                </div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-icon">🏷️</div>
+                <div class="stat-content">
+                  <div class="stat-value">15,632</div>
+                  <div class="stat-label">生成追溯码</div>
+                </div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-icon">🔍</div>
+                <div class="stat-content">
+                  <div class="stat-value">12,458</div>
+                  <div class="stat-label">扫码查询次数</div>
+                </div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                  <div class="stat-value">98.7%</div>
+                  <div class="stat-label">追溯覆盖率</div>
+                </div>
               </div>
             </div>
             
-            <div class="platform-item">
-              <div class="item-icon">🔍</div>
-              <div class="item-content">
-                <div class="item-value">15,632</div>
-                <div class="item-label">产品追溯码</div>
-              </div>
-            </div>
-            
-            <div class="platform-item">
-              <div class="item-icon">📊</div>
-              <div class="item-content">
-                <div class="item-value">98.7%</div>
-                <div class="item-label">追溯覆盖率</div>
+            <!-- 今日数据 -->
+            <div class="today-stats">
+              <div class="today-title">今日数据</div>
+              <div class="today-items">
+                <div class="today-item">
+                  <span class="today-label">新增追溯码</span>
+                  <span class="today-value">+127</span>
+                </div>
+                <div class="today-item">
+                  <span class="today-label">查询次数</span>
+                  <span class="today-value">+334</span>
+                </div>
+                <div class="today-item">
+                  <span class="today-label">活跃用户</span>
+                  <span class="today-value">+89</span>
+                </div>
               </div>
             </div>
           </div>
           
-          <!-- 追溯流程 -->
+          <!-- 追溯流程示意图 -->
           <div class="traceability-flow">
-            <div class="flow-step" v-for="(step, index) in traceabilitySteps" :key="index">
-              <div class="step-icon">{{ step.icon }}</div>
-              <div class="step-title">{{ step.title }}</div>
-              <div class="step-desc">{{ step.description }}</div>
-              <div class="step-connector" v-if="index < traceabilitySteps.length - 1">→</div>
+            <div class="flow-title">追溯流程示意图</div>
+            <div class="flow-diagram">
+              <div class="flow-step" v-for="(step, index) in traceabilitySteps" :key="index">
+                <div class="step-container">
+                  <div class="step-icon" :class="step.status">{{ step.icon }}</div>
+                  <div class="step-content">
+                    <div class="step-title">{{ step.title }}</div>
+                    <div class="step-desc">{{ step.description }}</div>
+                    <div class="step-count">{{ step.count }}</div>
+                  </div>
+                </div>
+                <div class="step-connector" v-if="index < traceabilitySteps.length - 1">
+                  <div class="connector-line"></div>
+                  <div class="connector-arrow">→</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 右侧：追溯码查询热力图 -->
+        <div class="right-traceability">
+          <h3 class="subsection-title">追溯码查询热力图</h3>
+          <div class="heatmap-container">
+            <canvas ref="heatmapCanvas" width="280" height="120"></canvas>
+          </div>
+          <div class="heatmap-legend">
+            <div class="legend-item">
+              <div class="legend-color low"></div>
+              <span>低查询</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color medium"></div>
+              <span>中查询</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color high"></div>
+              <span>高查询</span>
             </div>
           </div>
         </div>
@@ -233,18 +274,19 @@ import UnifiedHeader from '@/components/UnifiedHeader.vue'
 const router = useRouter()
 const gaugeCanvas = ref<HTMLCanvasElement>()
 const trendChart = ref<HTMLCanvasElement>()
+const heatmapCanvas = ref<HTMLCanvasElement>()
 
 const currentTime = ref('')
 
 // 认证标识数据
-const certificationMarkers = ref([
-  { id: 1, x: 100, y: 100, color: '#7ED321' },
-  { id: 2, x: 180, y: 120, color: '#7ED321' },
-  { id: 3, x: 320, y: 100, color: '#4A90E2' },
-  { id: 4, x: 400, y: 120, color: '#4A90E2' },
-  { id: 5, x: 200, y: 230, color: '#F5A623' },
-  { id: 6, x: 280, y: 250, color: '#F5A623' },
-  { id: 7, x: 320, y: 270, color: '#F5A623' }
+const trackingPoints = ref([
+  { id: 1, x: 15, y: 25, color: '#7ED321', name: '基地A' },
+  { id: 2, x: 35, y: 45, color: '#4A90E2', name: '基地B' },
+  { id: 3, x: 55, y: 65, color: '#F5A623', name: '基地C' },
+  { id: 4, x: 75, y: 35, color: '#7ED321', name: '基地D' },
+  { id: 5, x: 25, y: 75, color: '#4A90E2', name: '基地E' },
+  { id: 6, x: 65, y: 25, color: '#F5A623', name: '基地F' },
+  { id: 7, x: 85, y: 55, color: '#F5A623', name: '基地G' }
 ])
 
 // 追溯流程步骤
@@ -252,27 +294,37 @@ const traceabilitySteps = ref([
   {
     icon: '🌱',
     title: '种植源头',
-    description: '种子来源记录'
+    description: '种子来源记录',
+    count: '1,247个基地',
+    status: 'active'
   },
   {
     icon: '🚜',
     title: '生产过程',
-    description: '农事操作记录'
+    description: '农事操作记录',
+    count: '15,632条记录',
+    status: 'active'
   },
   {
     icon: '🔬',
     title: '质量检测',
-    description: '检测报告上传'
+    description: '检测报告上传',
+    count: '544份报告',
+    status: 'active'
   },
   {
     icon: '📦',
     title: '包装加工',
-    description: '加工环节记录'
+    description: '加工环节记录',
+    count: '12,458个批次',
+    status: 'active'
   },
   {
     icon: '🚚',
     title: '流通销售',
-    description: '物流信息追踪'
+    description: '物流信息追踪',
+    count: '98.7%覆盖率',
+    status: 'active'
   }
 ])
 
@@ -296,36 +348,32 @@ const getParticleStyle = (index: number) => {
   }
 }
 
-const goBack = () => {
-  router.push('/')
-}
-
 const drawGauge = () => {
   if (!gaugeCanvas.value) return
   
   const ctx = gaugeCanvas.value.getContext('2d')
   if (!ctx) return
   
-  const centerX = 100
-  const centerY = 100
-  const radius = 80
+  const centerX = 60
+  const centerY = 60
+  const radius = 50
   const percentage = 100
   
   // 清空画布
-  ctx.clearRect(0, 0, 200, 200)
+  ctx.clearRect(0, 0, 120, 120)
   
   // 绘制背景圆弧
   ctx.beginPath()
   ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI)
   ctx.strokeStyle = 'rgba(74, 144, 226, 0.2)'
-  ctx.lineWidth = 10
+  ctx.lineWidth = 6
   ctx.stroke()
   
   // 绘制进度圆弧
   ctx.beginPath()
   ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + (Math.PI * percentage / 100))
   ctx.strokeStyle = '#7ED321'
-  ctx.lineWidth = 10
+  ctx.lineWidth = 6
   ctx.lineCap = 'round'
   ctx.stroke()
 }
@@ -336,16 +384,16 @@ const drawTrendChart = () => {
   const ctx = trendChart.value.getContext('2d')
   if (!ctx) return
   
-  ctx.clearRect(0, 0, 400, 200)
+  ctx.clearRect(0, 0, 350, 160)
   
   // 模拟数据
   const months = ['1月', '2月', '3月', '4月', '5月', '6月']
   const townData = [45, 52, 48, 61, 55, 67]
   const companyData = [38, 45, 42, 58, 52, 63]
   
-  const barWidth = 25
-  const spacing = 40
-  const startX = 50
+  const barWidth = 18
+  const spacing = 30
+  const startX = 30
   const maxValue = Math.max(...townData, ...companyData)
   
   // 绘制柱状图
@@ -353,21 +401,68 @@ const drawTrendChart = () => {
     const x = startX + index * (barWidth * 2 + spacing)
     
     // 镇级抽检
-    const townHeight = (townData[index] / maxValue) * 150
+    const townHeight = (townData[index] / maxValue) * 110
     ctx.fillStyle = '#7ED321'
-    ctx.fillRect(x, 180 - townHeight, barWidth, townHeight)
+    ctx.fillRect(x, 130 - townHeight, barWidth, townHeight)
     
     // 企业自检
-    const companyHeight = (companyData[index] / maxValue) * 150
+    const companyHeight = (companyData[index] / maxValue) * 110
     ctx.fillStyle = '#4A90E2'
-    ctx.fillRect(x + barWidth + 5, 180 - companyHeight, barWidth, companyHeight)
+    ctx.fillRect(x + barWidth + 2, 130 - companyHeight, barWidth, companyHeight)
     
     // 月份标签
     ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-    ctx.font = '12px Arial'
+    ctx.font = '11px Arial'
     ctx.textAlign = 'center'
-    ctx.fillText(month, x + barWidth, 195)
+    ctx.fillText(month, x + barWidth, 150)
   })
+}
+
+// 绘制追溯码查询热力图
+const drawHeatmap = () => {
+  if (!heatmapCanvas.value) return
+  
+  const ctx = heatmapCanvas.value.getContext('2d')
+  if (!ctx) return
+  
+  ctx.clearRect(0, 0, 280, 120)
+  
+  // 模拟7天24小时的查询数据
+  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  const hours = Array.from({length: 24}, (_, i) => i)
+  
+  const cellWidth = 280 / 24
+  const cellHeight = 120 / 7
+  
+  days.forEach((day, dayIndex) => {
+    hours.forEach((hour, hourIndex) => {
+      // 模拟查询强度 (0-1)
+      const intensity = Math.sin((dayIndex * 24 + hour) * 0.1) * 0.5 + 0.5 + Math.random() * 0.3
+      
+      // 根据强度设置颜色
+      let color
+      if (intensity < 0.3) {
+        color = `rgba(74, 144, 226, ${intensity + 0.2})`
+      } else if (intensity < 0.7) {
+        color = `rgba(126, 211, 33, ${intensity})`
+      } else {
+        color = `rgba(255, 165, 0, ${intensity})`
+      }
+      
+      ctx.fillStyle = color
+      ctx.fillRect(hourIndex * cellWidth, dayIndex * cellHeight, cellWidth - 1, cellHeight - 1)
+    })
+  })
+  
+  // 绘制时间标签
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+  ctx.font = '9px sans-serif'
+  ctx.textAlign = 'center'
+  
+  // 小时标签
+  for (let i = 0; i < 24; i += 6) {
+    ctx.fillText(`${i}:00`, i * cellWidth + cellWidth/2, 115)
+  }
 }
 
 let timeInterval: number
@@ -379,6 +474,7 @@ onMounted(() => {
   setTimeout(() => {
     drawGauge()
     drawTrendChart()
+    drawHeatmap()
   }, 100)
 })
 
@@ -447,91 +543,555 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-// 头部
-.page-header {
-  position: relative;
-  z-index: 10;
-  padding: 20px;
-  border-bottom: 1px solid rgba(126, 211, 33, 0.3);
-  
-  @media (min-width: 768px) {
-    padding: 20px 40px;
-  }
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: rgba(126, 211, 33, 0.2);
-  border: 1px solid rgba(126, 211, 33, 0.5);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(126, 211, 33, 0.3);
-    transform: translateX(-2px);
-  }
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #7ED321;
-  margin: 0;
-}
-
-.time-display {
-  font-size: 18px;
-  color: #4A90E2;
-  font-weight: bold;
-}
-
-// 主内容
+// 主要布局
 .page-main {
   position: relative;
   z-index: 10;
-  display: flex;
   padding: 20px;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  height: calc(100vh - 140px);
+}
+
+// 顶部区域
+.top-section {
+  display: flex;
+  gap: 20px;
+  height: 280px;
   
-  @media (min-width: 768px) {
-    padding: 30px 40px;
-    gap: 30px;
+  .certification-overview {
+    flex: 1;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(126, 211, 33, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    
+    .cert-stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      
+      .stat-card {
+        flex: 1;
+        background: rgba(12, 20, 38, 0.6);
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        border: 1px solid rgba(126, 211, 33, 0.2);
+        
+        .stat-icon {
+          font-size: 30px;
+          margin-bottom: 10px;
+        }
+        
+        .stat-value {
+          font-size: 24px;
+          font-weight: bold;
+          color: #7ED321;
+          margin-bottom: 5px;
+        }
+        
+        .stat-label {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
   }
   
-  @media (max-width: 767px) {
-    flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 140px);
+  .quality-stats {
+    flex: 1;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    
+    .stats-content {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      
+      .stats-grid {
+        flex: 2;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        
+        .quality-card {
+          background: rgba(12, 20, 38, 0.6);
+          border-radius: 8px;
+          padding: 10px;
+          border: 1px solid rgba(74, 144, 226, 0.2);
+          
+          .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            
+            .card-icon {
+              font-size: 18px;
+            }
+            
+            .card-title {
+              font-size: 12px;
+              color: #4A90E2;
+            }
+          }
+          
+          .card-content {
+            .main-metric {
+              margin-bottom: 8px;
+              
+              .value {
+                font-size: 20px;
+                font-weight: bold;
+                color: #7ED321;
+              }
+              
+              .unit {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.6);
+                margin-left: 5px;
+              }
+            }
+            
+            .sub-metrics {
+              display: flex;
+              flex-direction: column;
+              gap: 4px;
+              
+              .sub-metric {
+                display: flex;
+                justify-content: space-between;
+                font-size: 11px;
+                
+                .label {
+                  color: rgba(255, 255, 255, 0.7);
+                }
+                
+                .value {
+                  color: #4A90E2;
+                  
+                  &.success {
+                    color: #7ED321;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      .compliance-gauge {
+        flex: 1;
+        text-align: center;
+        
+        .gauge-title {
+          font-size: 12px;
+          color: #4A90E2;
+          margin-bottom: 10px;
+        }
+        
+        .gauge-container {
+          position: relative;
+          display: inline-block;
+          
+          .gauge-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            
+            .percentage {
+              font-size: 18px;
+              font-weight: bold;
+              color: #7ED321;
+              display: block;
+            }
+            
+            .label {
+              font-size: 10px;
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
-.left-section {
+// 中间区域
+.middle-section {
+  display: flex;
+  gap: 20px;
+  height: 260px;
+  
+  .certification-tracking {
+    flex: 1;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(126, 211, 33, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    
+    .tracking-map {
+      margin-top: 20px;
+      
+      .map-container {
+        width: 100%;
+        height: 180px;
+        background: rgba(12, 20, 38, 0.4);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        
+        .tracking-point {
+          position: absolute;
+          
+          .point-marker {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: pulse 2s infinite;
+          }
+          
+          .point-label {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-top: 2px;
+          }
+        }
+      }
+    }
+  }
+  
+  .inspection-trends {
+    flex: 1;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    
+    .chart-container {
+      margin-top: 20px;
+      background: rgba(12, 20, 38, 0.4);
+      border-radius: 8px;
+      padding: 10px;
+      height: 180px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      canvas {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+    
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 10px;
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        
+        .legend-color {
+          width: 10px;
+          height: 10px;
+          border-radius: 2px;
+        }
+      }
+    }
+  }
+}
+
+// 底部区域
+.bottom-section {
+  display: flex;
+  gap: 20px;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+  
+  .left-traceability {
+    flex: 2;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    
+    .traceability-stats {
+      margin-bottom: 20px;
+      
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 10px;
+        
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px;
+          background: rgba(12, 20, 38, 0.6);
+          border-radius: 6px;
+          border: 1px solid rgba(74, 144, 226, 0.2);
+          transition: all 0.3s ease;
+          
+          &:hover {
+            border-color: #7ED321;
+            box-shadow: 0 0 8px rgba(126, 211, 33, 0.3);
+          }
+          
+          .stat-icon {
+            font-size: 14px;
+            filter: drop-shadow(0 1px 2px rgba(126, 211, 33, 0.3));
+          }
+          
+          .stat-content {
+            .stat-value {
+              font-size: 12px;
+              font-weight: bold;
+              color: #4A90E2;
+              margin-bottom: 2px;
+            }
+            
+            .stat-label {
+              font-size: 9px;
+              color: rgba(255, 255, 255, 0.7);
+            }
+          }
+        }
+      }
+      
+      .today-stats {
+        background: rgba(12, 20, 38, 0.4);
+        border-radius: 6px;
+        padding: 8px;
+        border: 1px solid rgba(126, 211, 33, 0.3);
+        
+        .today-title {
+          font-size: 11px;
+          font-weight: bold;
+          color: #7ED321;
+          margin-bottom: 6px;
+          text-align: center;
+        }
+        
+        .today-items {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+          
+          .today-item {
+            text-align: center;
+            
+            .today-label {
+              display: block;
+              font-size: 9px;
+              color: rgba(255, 255, 255, 0.6);
+              margin-bottom: 2px;
+            }
+            
+            .today-value {
+              font-size: 11px;
+              font-weight: bold;
+              color: #7ED321;
+            }
+          }
+        }
+      }
+    }
+    
+    .traceability-flow {
+      .flow-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: #4A90E2;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      
+      .flow-diagram {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        
+        .flow-step {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          flex: 1;
+          position: relative;
+          
+          .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+            .step-icon {
+              font-size: 20px;
+              margin-bottom: 8px;
+              padding: 8px;
+              background: rgba(126, 211, 33, 0.2);
+              border-radius: 50%;
+              border: 1px solid #7ED321;
+              transition: all 0.3s ease;
+              
+              &.active {
+                background: rgba(126, 211, 33, 0.3);
+                box-shadow: 0 0 10px rgba(126, 211, 33, 0.5);
+              }
+            }
+            
+            .step-content {
+              .step-title {
+                font-size: 10px;
+                font-weight: bold;
+                color: #4A90E2;
+                margin-bottom: 4px;
+              }
+              
+              .step-desc {
+                font-size: 9px;
+                color: rgba(255, 255, 255, 0.6);
+                margin-bottom: 4px;
+              }
+              
+              .step-count {
+                font-size: 8px;
+                color: #7ED321;
+                font-weight: bold;
+              }
+            }
+          }
+          
+          .step-connector {
+            position: absolute;
+            width: calc(100% - 60px);
+            height: 1px;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            
+            .connector-line {
+              width: 100%;
+              height: 1px;
+              background: linear-gradient(90deg, #7ED321, rgba(126, 211, 33, 0.3));
+              position: relative;
+              
+              &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 0;
+                background: #7ED321;
+                animation: flowAnimation 2s infinite;
+              }
+            }
+            
+            .connector-arrow {
+              position: absolute;
+              right: -6px;
+              top: -4px;
+              font-size: 10px;
+              color: #7ED321;
+              animation: pulse 2s infinite;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .right-traceability {
+    flex: 1;
+    background: rgba(26, 35, 50, 0.8);
+    border: 1px solid rgba(74, 144, 226, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    .heatmap-container {
+      background: rgba(12, 20, 38, 0.4);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(74, 144, 226, 0.2);
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      canvas {
+        width: 100%;
+        height: auto;
+        max-width: 280px;
+        max-height: 120px;
+      }
+    }
+    
+    .heatmap-legend {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: auto;
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        
+        .legend-color {
+          width: 12px;
+          height: 12px;
+          border-radius: 2px;
+          
+          &.low {
+            background: rgba(74, 144, 226, 0.6);
+          }
+          
+          &.medium {
+            background: rgba(126, 211, 33, 0.6);
+          }
+          
+          &.high {
+            background: rgba(255, 165, 0, 0.6);
+          }
+        }
+      }
+    }
+  }
 }
 
-.right-section {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
+// 通用样式
 .section-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 15px;
   color: #7ED321;
@@ -540,344 +1100,29 @@ onUnmounted(() => {
 }
 
 .subsection-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: #4A90E2;
 }
 
-// 认证概览
-.certification-overview {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(126, 211, 33, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.cert-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  
-  &.primary {
-    background: rgba(126, 211, 33, 0.1);
-    border: 1px solid rgba(126, 211, 33, 0.3);
-    
-    &:hover {
-      border-color: #7ED321;
-      box-shadow: 0 0 15px rgba(126, 211, 33, 0.3);
-    }
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
   }
-  
-  &.secondary {
-    background: rgba(74, 144, 226, 0.1);
-    border: 1px solid rgba(74, 144, 226, 0.3);
-    
-    &:hover {
-      border-color: #4A90E2;
-      box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
-    }
-  }
-  
-  &.tertiary {
-    background: rgba(245, 166, 35, 0.1);
-    border: 1px solid rgba(245, 166, 35, 0.3);
-    
-    &:hover {
-      border-color: #F5A623;
-      box-shadow: 0 0 15px rgba(245, 166, 35, 0.3);
-    }
-  }
-  
-  .stat-icon {
-    font-size: 32px;
-  }
-  
-  .stat-content {
-    .stat-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #4A90E2;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-    }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
   }
 }
 
-// 认证地图
-.certification-map {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  flex: 1;
-}
-
-.map-container {
-  height: 100%;
-  
-  .cert-map-svg {
+@keyframes flowAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
     width: 100%;
-    height: 100%;
-  }
-}
-
-// 质量统计
-.quality-stats {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.quality-card {
-  background: rgba(12, 20, 38, 0.6);
-  border: 1px solid rgba(74, 144, 226, 0.2);
-  border-radius: 8px;
-  padding: 15px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: #4A90E2;
-    box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
-  }
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  
-  .card-icon {
-    font-size: 20px;
-  }
-  
-  .card-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: #4A90E2;
-  }
-}
-
-.card-content {
-  .main-metric {
-    margin-bottom: 15px;
-    
-    .value {
-      font-size: 28px;
-      font-weight: bold;
-      color: #7ED321;
-    }
-    
-    .unit {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.6);
-      margin-left: 5px;
-    }
-  }
-  
-  .sub-metrics {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .sub-metric {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    
-    .label {
-      color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .value {
-      color: #4A90E2;
-      font-weight: bold;
-      
-      &.success {
-        color: #7ED321;
-      }
-    }
-  }
-}
-
-// 合格率仪表盘
-.compliance-gauge {
-  text-align: center;
-  
-  .gauge-title {
-    font-size: 16px;
-    color: #7ED321;
-    margin-bottom: 15px;
-  }
-  
-  .gauge-container {
-    position: relative;
-    display: inline-block;
-    
-    .gauge-value {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      
-      .percentage {
-        display: block;
-        font-size: 24px;
-        font-weight: bold;
-        color: #7ED321;
-      }
-      
-      .label {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.7);
-      }
-    }
-  }
-}
-
-// 抽检趋势
-.inspection-trends {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.chart-container {
-  background: rgba(12, 20, 38, 0.4);
-  border-radius: 8px;
-  padding: 5px;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: center;
-}
-
-.chart-legend {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    
-    .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-    }
-  }
-}
-
-// 追溯平台
-.traceability-platform {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.platform-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.platform-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: rgba(12, 20, 38, 0.4);
-  border-radius: 8px;
-  
-  .item-icon {
-    font-size: 20px;
-  }
-  
-  .item-content {
-    .item-value {
-      font-size: 18px;
-      font-weight: bold;
-      color: #4A90E2;
-    }
-    
-    .item-label {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
-    }
-  }
-}
-
-.traceability-flow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-}
-
-.flow-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex: 1;
-  position: relative;
-  
-  .step-icon {
-    font-size: 24px;
-    margin-bottom: 8px;
-  }
-  
-  .step-title {
-    font-size: 12px;
-    font-weight: bold;
-    color: #4A90E2;
-    margin-bottom: 4px;
-  }
-  
-  .step-desc {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-  
-  .step-connector {
-    position: absolute;
-    right: -15px;
-    top: 12px;
-    font-size: 16px;
-    color: #7ED321;
   }
 }
 </style>

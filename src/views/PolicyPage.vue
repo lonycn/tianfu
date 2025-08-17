@@ -872,6 +872,8 @@ onUnmounted(() => {
   font-size: 18px;
   color: #4A90E2;
   font-weight: bold;
+}
+
 // 主内容
 .page-main {
   position: relative;
@@ -886,13 +888,13 @@ onUnmounted(() => {
     gap: 30px;
   }
   
+  overflow-y: auto;
+  
   @media (max-width: 767px) {
      flex-direction: column;
      height: auto;
      min-height: calc(100vh - 140px);
    }
-   
-   overflow-y: auto;
  }
 
 .left-section {

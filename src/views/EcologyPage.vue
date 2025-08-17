@@ -1,82 +1,104 @@
 <template>
   <div class="ecology-page">
-    <!-- 背景动画 -->
-    <div class="bg-animation">
-      <div 
-        v-for="i in 12" 
-        :key="i" 
-        class="particle" 
-        :style="getParticleStyle(i)"
-      ></div>
+    <!-- 科技背景 -->
+    <div class="tech-bg">
+      <div class="water-wave"></div>
+      <div class="grid-overlay"></div>
     </div>
     
-    <!-- 网格背景 -->
-    <div class="grid-bg"></div>
-    
     <!-- 页面头部 -->
-    <UnifiedHeader current-page="ecology" />
+    <UnifiedHeader />
+
+    <!-- 数据统计横幅 -->
+    <section class="data-banner">
+      <div class="banner-item" v-for="item in summaryData" :key="item.label">
+        <div class="item-icon">{{ item.icon }}</div>
+        <div class="item-content">
+          <div class="item-value">
+            <span class="number">{{ item.value }}</span>
+            <span class="unit">{{ item.unit }}</span>
+          </div>
+          <div class="item-label">{{ item.label }}</div>
+        </div>
+      </div>
+    </section>
 
     <!-- 主内容 -->
     <main class="page-main">
-      <!-- 左侧：环境监测数据 -->
+      <!-- 左侧：图像轮播 + 鸟类图谱 -->
       <section class="left-section">
-        <!-- 空气质量监测 -->
-        <div class="air-quality-monitor">
-          <h2 class="section-title">空气质量实时监测</h2>
-          <div class="aqi-display">
-            <div class="aqi-main">
-              <div class="aqi-value" :class="getAQILevel(currentAQI).class">{{ currentAQI }}</div>
-              <div class="aqi-label">AQI指数</div>
-              <div class="aqi-status" :style="{ color: getAQILevel(currentAQI).color }">
-                {{ getAQILevel(currentAQI).status }}
+        <!-- 鸟类实拍图像轮播 -->
+        <div class="bird-carousel-card">
+          <h2 class="section-title">
+            <i class="icon-bird"></i>
+            鸟类实时监测
+          </h2>
+          
+          <div class="carousel-container">
+            <div class="carousel-main">
+              <div class="bird-image-wrapper">
+                <div class="image-placeholder">
+                  <div class="bird-icon">🦅</div>
+                  <div class="image-label">图像加载中...</div>
+                </div>
+                <div class="image-info">
+                  <h3 class="bird-name">{{ currentBirdImage.name }}</h3>
+                  <div class="bird-details">
+                    <span class="detail-item">
+                      <i>📍</i> {{ currentBirdImage.location }}
+                    </span>
+                    <span class="detail-item">
+                      <i>🕰️</i> {{ currentBirdImage.time }}
+                    </span>
+                  </div>
+                  <div class="ai-recognition" v-if="currentBirdImage.aiResult">
+                    <span class="ai-badge">AI识别</span>
+                    <span class="ai-result">{{ currentBirdImage.aiResult }}</span>
+                    <span class="confidence">置信度: {{ currentBirdImage.confidence }}%</span>
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div class="pollutant-details">
-              <div class="pollutant-item" v-for="pollutant in pollutants" :key="pollutant.name">
-                <div class="pollutant-name">{{ pollutant.name }}</div>
-                <div class="pollutant-value">{{ pollutant.value }}</div>
-                <div class="pollutant-unit">{{ pollutant.unit }}</div>
-                <div class="pollutant-bar">
-                  <div 
-                    class="pollutant-progress" 
-                    :style="{ width: `${pollutant.percentage}%`, backgroundColor: pollutant.color }"
-                  ></div>
-                </div>
-              </div>
+            <!-- 轮播指示器 -->
+            <div class="carousel-indicators">
+              <span 
+                v-for="(img, index) in birdImages" 
+                :key="img.id"
+                class="indicator"
+                :class="{ active: currentBirdIndex === index }"
+                @click="selectBirdImage(index)"
+              ></span>
             </div>
           </div>
         </div>
         
-        <!-- 水质监测 -->
-        <div class="water-quality-monitor">
-          <h3 class="subsection-title">水质监测数据</h3>
-          <div class="water-stations">
+        <!-- 鸟类图谱列表 -->
+        <div class="bird-atlas-card">
+          <div class="atlas-header">
+            <h3 class="subsection-title">鸟类图谱</h3>
+            <button class="load-more-btn" @click="loadMoreBirds">
+              查看更多鸟类 <span class="count">({{ totalBirdSpecies }})</span>
+            </button>
+          </div>
+          
+          <div class="atlas-grid">
             <div 
-              class="station-card" 
-              v-for="station in waterStations" 
-              :key="station.id"
-              @click="selectWaterStation(station.id)"
-              :class="{ active: selectedWaterStation === station.id }"
+              v-for="bird in birdAtlas" 
+              :key="bird.id"
+              class="bird-card"
+              :class="{ protected: bird.protected }"
+              @click="showBirdDetail(bird)"
             >
-              <div class="station-header">
-                <div class="station-icon">💧</div>
-                <div class="station-name">{{ station.name }}</div>
-                <div class="station-status" :class="station.status">{{ station.statusText }}</div>
-              </div>
-              
-              <div class="station-metrics">
-                <div class="metric-row">
-                  <span class="metric-label">pH值:</span>
-                  <span class="metric-value">{{ station.ph }}</span>
+              <div class="bird-avatar">{{ bird.icon }}</div>
+              <div class="bird-info">
+                <div class="bird-name">{{ bird.name }}</div>
+                <div class="bird-scientific">{{ bird.scientific }}</div>
+                <div class="bird-habitat">
+                  <i>🌿</i> {{ bird.habitat }}
                 </div>
-                <div class="metric-row">
-                  <span class="metric-label">溶解氧:</span>
-                  <span class="metric-value">{{ station.dissolvedOxygen }}mg/L</span>
-                </div>
-                <div class="metric-row">
-                  <span class="metric-label">浊度:</span>
-                  <span class="metric-value">{{ station.turbidity }}NTU</span>
+                <div class="protection-badge" v-if="bird.protected">
+                  {{ bird.protectionLevel }}
                 </div>
               </div>
             </div>
@@ -84,530 +106,468 @@
         </div>
       </section>
 
-      <!-- 右侧：生态保护数据 -->
+      <!-- 右侧：动态数据图表 -->
       <section class="right-section">
-        <!-- 生物多样性统计 -->
-        <div class="biodiversity-stats">
-          <h2 class="section-title">生物多样性统计</h2>
-          <div class="species-overview">
-            <div class="species-category" v-for="category in speciesData" :key="category.name">
-              <div class="category-icon">{{ category.icon }}</div>
-              <div class="category-content">
-                <div class="category-name">{{ category.name }}</div>
-                <div class="category-count">{{ category.count }}种</div>
-                <div class="category-trend" :class="category.trend">
-                  {{ category.trendText }}
+        <!-- 年度鸟类发现数量折线图 -->
+        <div class="bird-trend-card">
+          <h2 class="section-title">
+            <i class="icon-chart"></i>
+            鸟类监测趋势
+          </h2>
+          
+          <div class="chart-container">
+            <canvas ref="birdTrendChart" width="500" height="280"></canvas>
+          </div>
+          
+          <div class="trend-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #178DFF"></span>
+              <span class="legend-label">新增种类</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #62C370"></span>
+              <span class="legend-label">监测样本数</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: #FFB74D"></span>
+              <span class="legend-label">保护种类</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 鸟类分类分布饼图 -->
+        <div class="bird-distribution-card">
+          <h3 class="subsection-title">鸟类分类分布</h3>
+          
+          <div class="distribution-content">
+            <div class="pie-chart-wrapper">
+              <canvas ref="birdPieChart" width="220" height="220"></canvas>
+            </div>
+            
+            <div class="distribution-list">
+              <div v-for="category in birdCategories" :key="category.name" class="category-item">
+                <span class="category-dot" :style="{ background: category.color }"></span>
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-count">{{ category.count }}种</span>
+                <span class="category-percent">{{ category.percentage }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 监测热度区域图 -->
+        <div class="hotspot-map-card">
+          <h3 class="subsection-title">鸟类活跃度热力图</h3>
+          
+          <div class="hotspot-content">
+            <div class="map-wrapper">
+              <div class="hotspot-area" v-for="area in hotspotAreas" :key="area.id">
+                <div 
+                  class="area-marker" 
+                  :class="area.activity"
+                  :style="{ left: area.x + '%', top: area.y + '%' }"
+                >
+                  <div class="area-name">{{ area.name }}</div>
+                  <div class="area-count">{{ area.count }}种</div>
+                  <div class="pulse-ring"></div>
                 </div>
               </div>
-              <div class="category-chart">
-                <canvas 
-                  :ref="el => categoryCharts[category.name] = el" 
-                  width="60" 
-                  height="60"
-                ></canvas>
+              <div class="map-legend">
+                <span class="legend-title">活跃度</span>
+                <div class="legend-scale">
+                  <span class="scale-low">低</span>
+                  <div class="scale-gradient"></div>
+                  <span class="scale-high">高</span>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 湿地保护区域 -->
-        <div class="wetland-protection">
-          <h3 class="subsection-title">湿地保护区域分布</h3>
-          <div class="protection-map">
-            <svg viewBox="0 0 500 300" class="wetland-map-svg">
-              <!-- 湿地区域 -->
-              <g v-for="area in wetlandAreas" :key="area.id">
-                <path 
-                  :d="area.path" 
-                  :fill="area.color" 
-                  :opacity="area.opacity"
-                  :stroke="area.strokeColor"
-                  stroke-width="2"
-                />
-                <text 
-                  :x="area.labelX" 
-                  :y="area.labelY" 
-                  :fill="area.textColor" 
-                  text-anchor="middle" 
-                  font-size="12"
-                  font-weight="bold"
-                >{{ area.name }}</text>
-                <text 
-                  :x="area.labelX" 
-                  :y="area.labelY + 15" 
-                  :fill="area.textColor" 
-                  text-anchor="middle" 
-                  font-size="10"
-                >{{ area.area }}公顷</text>
-              </g>
-              
-              <!-- 监测点 -->
-              <g v-for="point in monitoringPoints" :key="point.id">
-                <circle 
-                  :cx="point.x" 
-                  :cy="point.y" 
-                  r="6" 
-                  :fill="point.color"
-                  stroke="white"
-                  stroke-width="2"
-                />
-                <circle 
-                  :cx="point.x" 
-                  :cy="point.y" 
-                  r="12" 
-                  fill="none"
-                  :stroke="point.color"
-                  stroke-width="1"
-                  opacity="0.5"
-                >
-                  <animate 
-                    attributeName="r" 
-                    values="12;18;12" 
-                    dur="2s" 
-                    repeatCount="indefinite"
-                  />
-                  <animate 
-                    attributeName="opacity" 
-                    values="0.5;0;0.5" 
-                    dur="2s" 
-                    repeatCount="indefinite"
-                  />
-                </circle>
-              </g>
-            </svg>
-          </div>
-          
-          <div class="protection-stats">
-            <div class="stat-item">
-              <div class="stat-icon">🌿</div>
-              <div class="stat-content">
-                <div class="stat-value">2,847</div>
-                <div class="stat-label">保护区面积(公顷)</div>
-              </div>
-            </div>
-            
-            <div class="stat-item">
-              <div class="stat-icon">🔬</div>
-              <div class="stat-content">
-                <div class="stat-value">24</div>
-                <div class="stat-label">监测点位</div>
-              </div>
-            </div>
-            
-            <div class="stat-item">
-              <div class="stat-icon">📊</div>
-              <div class="stat-content">
-                <div class="stat-value">98.5%</div>
-                <div class="stat-label">生态完整性</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 环境趋势分析 -->
-        <div class="environmental-trends">
-          <h3 class="subsection-title">环境质量趋势分析</h3>
-          <div class="trend-tabs">
-            <div 
-              class="trend-tab" 
-              v-for="tab in trendTabs" 
-              :key="tab.id"
-              @click="selectTrendTab(tab.id)"
-              :class="{ active: selectedTrendTab === tab.id }"
-            >
-              {{ tab.name }}
-            </div>
-          </div>
-          
-          <div class="trend-chart-container">
-            <canvas ref="trendChart" width="450" height="200"></canvas>
-          </div>
-          
-          <div class="trend-summary">
-            <div class="summary-item" v-for="summary in currentTrendSummary" :key="summary.label">
-              <div class="summary-label">{{ summary.label }}</div>
-              <div class="summary-value" :class="summary.trend">{{ summary.value }}</div>
             </div>
           </div>
         </div>
       </section>
     </main>
+    
+    <!-- 底部辅助区 -->
+    <section class="bottom-section">
+      <!-- 湿地修复前后对比 -->
+      <div class="restoration-comparison">
+        <h2 class="section-title">
+          <i class="icon-compare"></i>
+          湿地修复成果
+        </h2>
+        
+        <div class="comparison-content">
+          <div class="comparison-item before">
+            <div class="year-label">2013年</div>
+            <div class="image-placeholder">
+              <div class="status-icon">🏜️</div>
+              <div class="status-text">退化湿地</div>
+            </div>
+            <div class="metrics">
+              <div class="metric">湿地率: 45.2%</div>
+              <div class="metric">鸟类: 89种</div>
+              <div class="metric">植被覆盖: 62%</div>
+            </div>
+          </div>
+          
+          <div class="vs-divider">
+            <div class="vs-icon">VS</div>
+            <div class="progress-arrow">→</div>
+          </div>
+          
+          <div class="comparison-item after">
+            <div class="year-label">2024年</div>
+            <div class="image-placeholder">
+              <div class="status-icon">🌳</div>
+              <div class="status-text">生态湿地</div>
+            </div>
+            <div class="metrics">
+              <div class="metric highlight">湿地率: 63.62%</div>
+              <div class="metric highlight">鸟类: 235种</div>
+              <div class="metric highlight">植被覆盖: 92%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 生态标语滚动 -->
+      <div class="ecological-slogans">
+        <div class="slogan-track" ref="sloganTrack">
+          <div class="slogan-item" v-for="(slogan, index) in [...slogans, ...slogans]" :key="index">
+            <span class="slogan-icon">🌿</span>
+            <span class="slogan-text">{{ slogan }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import UnifiedHeader from '@/components/UnifiedHeader.vue'
 
-const router = useRouter()
-const trendChart = ref<HTMLCanvasElement>()
-const categoryCharts = ref<Record<string, HTMLCanvasElement>>({})
+// Canvas refs
+const birdTrendChart = ref<HTMLCanvasElement | null>(null)
+const birdPieChart = ref<HTMLCanvasElement | null>(null)
+const sloganTrack = ref<HTMLDivElement | null>(null)
 
-const currentTime = ref('')
-const currentAQI = ref(45)
-const selectedWaterStation = ref(1)
-const selectedTrendTab = ref('air')
+// 状态数据
+const currentBirdIndex = ref(0)
+const totalBirdSpecies = ref(235)
+let birdCarouselInterval: number | null = null
 
-// 污染物数据
-const pollutants = ref([
-  { name: 'PM2.5', value: 12, unit: 'μg/m³', percentage: 24, color: '#7ED321' },
-  { name: 'PM10', value: 28, unit: 'μg/m³', percentage: 35, color: '#4A90E2' },
-  { name: 'SO2', value: 8, unit: 'μg/m³', percentage: 16, color: '#F5A623' },
-  { name: 'NO2', value: 15, unit: 'μg/m³', percentage: 30, color: '#BD10E0' },
-  { name: 'CO', value: 0.6, unit: 'mg/m³', percentage: 12, color: '#50E3C2' },
-  { name: 'O3', value: 85, unit: 'μg/m³', percentage: 53, color: '#FF6B6B' }
+// 顶部数据总览
+const summaryData = ref([
+  { icon: '🌳', label: '恢复湿地面积', value: '495.94', unit: '公顷' },
+  { icon: '📊', label: '当前湿地率', value: '63.62', unit: '%' },
+  { icon: '🦅', label: '已监测鸟类种类', value: '235', unit: '种' },
+  { icon: '⭐', label: '国家重点保护鸟类', value: '56', unit: '种' }
 ])
 
-// 水质监测站点
-const waterStations = ref([
+// 鸟类图像轮播数据
+const birdImages = ref([
   {
     id: 1,
-    name: '湿地核心区',
-    status: 'excellent',
-    statusText: '优',
-    ph: 7.2,
-    dissolvedOxygen: 8.5,
-    turbidity: 2.1
+    name: '中华秋沙鸭',
+    location: '红房子观鸟区',
+    time: '2024-01-15 14:32',
+    aiResult: '中华秋沙鸭 (国家一级)',
+    confidence: 98.5
   },
   {
     id: 2,
-    name: '缓冲区域',
-    status: 'good',
-    statusText: '良',
-    ph: 7.0,
-    dissolvedOxygen: 7.8,
-    turbidity: 3.2
+    name: '黑鹳',
+    location: '水岸湿地',
+    time: '2024-01-15 15:18',
+    aiResult: '黑鹳 (国家二级)',
+    confidence: 96.2
   },
   {
     id: 3,
-    name: '实验区',
-    status: 'good',
-    statusText: '良',
-    ph: 6.9,
-    dissolvedOxygen: 7.2,
-    turbidity: 4.1
+    name: '苍鹭',
+    location: '芦苇荡',
+    time: '2024-01-15 16:45',
+    aiResult: '苍鹭 (涉禽)',
+    confidence: 99.1
+  },
+  {
+    id: 4,
+    name: '白鹭',
+    location: '核心保护区',
+    time: '2024-01-15 17:20',
+    aiResult: '白鹭 (常见种)',
+    confidence: 97.8
+  },
+  {
+    id: 5,
+    name: '青头潜鸭',
+    location: '缓冲区',
+    time: '2024-01-15 18:05',
+    aiResult: '青头潜鸭 (极危物种)',
+    confidence: 94.3
   }
 ])
 
-// 物种数据
-const speciesData = ref([
+const currentBirdImage = computed(() => birdImages.value[currentBirdIndex.value] || birdImages.value[0])
+
+// 鸟类图谱
+const birdAtlas = ref([
   {
-    name: '鸟类',
+    id: 1,
     icon: '🦅',
-    count: 156,
-    trend: 'up',
-    trendText: '↗ +8种',
-    data: [45, 52, 48, 61, 55, 67]
-  },
-  {
-    name: '植物',
-    icon: '🌱',
-    count: 342,
-    trend: 'up',
-    trendText: '↗ +15种',
-    data: [120, 135, 128, 145, 138, 152]
-  },
-  {
-    name: '水生动物',
-    icon: '🐟',
-    count: 89,
-    trend: 'stable',
-    trendText: '→ 稳定',
-    data: [28, 32, 30, 35, 33, 36]
-  },
-  {
-    name: '昆虫',
-    icon: '🦋',
-    count: 278,
-    trend: 'up',
-    trendText: '↗ +12种',
-    data: [85, 92, 88, 98, 95, 105]
-  }
-])
-
-// 湿地保护区域
-const wetlandAreas = ref([
-  {
-    id: 1,
-    name: '核心保护区',
-    area: 1247,
-    path: 'M50,50 L200,50 L200,150 L50,150 Z',
-    color: '#7ED321',
-    opacity: 0.3,
-    strokeColor: '#7ED321',
-    textColor: '#7ED321',
-    labelX: 125,
-    labelY: 90
+    name: '东方白鹳',
+    scientific: 'Ciconia boyciana',
+    habitat: '湿地、沼泽',
+    protected: true,
+    protectionLevel: '国家一级'
   },
   {
     id: 2,
-    name: '缓冲区',
-    area: 856,
-    path: 'M220,60 L380,60 L380,180 L220,180 Z',
-    color: '#4A90E2',
-    opacity: 0.3,
-    strokeColor: '#4A90E2',
-    textColor: '#4A90E2',
-    labelX: 300,
-    labelY: 110
+    icon: '🦆',
+    name: '黑脸琵鹭',
+    scientific: 'Platalea minor',
+    habitat: '浅水区',
+    protected: true,
+    protectionLevel: '国家一级'
   },
   {
     id: 3,
-    name: '实验区',
-    area: 744,
-    path: 'M100,200 L350,200 L350,280 L100,280 Z',
-    color: '#F5A623',
-    opacity: 0.3,
-    strokeColor: '#F5A623',
-    textColor: '#F5A623',
-    labelX: 225,
-    labelY: 235
+    icon: '🦜',
+    name: '绿头鸭',
+    scientific: 'Anas platyrhynchos',
+    habitat: '湖泊、河流',
+    protected: false
+  },
+  {
+    id: 4,
+    icon: '🦚',
+    name: '小天鹅',
+    scientific: 'Cygnus columbianus',
+    habitat: '大型水域',
+    protected: true,
+    protectionLevel: '国家二级'
+  },
+  {
+    id: 5,
+    icon: '🦉',
+    name: '普通鸬鹚',
+    scientific: 'Tachybaptus ruficollis',
+    habitat: '淡水湖泊',
+    protected: false
+  },
+  {
+    id: 6,
+    icon: '🦜',
+    name: '赤麻鸭',
+    scientific: 'Tadorna ferruginea',
+    habitat: '咸淡水交界',
+    protected: false
   }
 ])
 
-// 监测点位
-const monitoringPoints = ref([
-  { id: 1, x: 100, y: 80, color: '#7ED321' },
-  { id: 2, x: 170, y: 120, color: '#7ED321' },
-  { id: 3, x: 250, y: 90, color: '#4A90E2' },
-  { id: 4, x: 320, y: 140, color: '#4A90E2' },
-  { id: 5, x: 150, y: 230, color: '#F5A623' },
-  { id: 6, x: 280, y: 250, color: '#F5A623' }
+// 鸟类分类数据
+const birdCategories = ref([
+  { name: '涉禽', count: 78, percentage: 33.2, color: '#178DFF' },
+  { name: '鸣禽', count: 65, percentage: 27.7, color: '#62C370' },
+  { name: '猛禽', count: 24, percentage: 10.2, color: '#FFB74D' },
+  { name: '游禽', count: 42, percentage: 17.9, color: '#FF7043' },
+  { name: '其他', count: 26, percentage: 11.0, color: '#9C27B0' }
 ])
 
-// 趋势分析标签
-const trendTabs = ref([
-  { id: 'air', name: '空气质量' },
-  { id: 'water', name: '水质状况' },
-  { id: 'biodiversity', name: '生物多样性' }
+// 监测热点区域
+const hotspotAreas = ref([
+  { id: 1, name: '红房子', x: 25, y: 30, count: 89, activity: 'high' },
+  { id: 2, name: '水岸', x: 50, y: 45, count: 67, activity: 'high' },
+  { id: 3, name: '林带', x: 75, y: 35, count: 45, activity: 'medium' },
+  { id: 4, name: '芦苇荡', x: 35, y: 65, count: 56, activity: 'high' },
+  { id: 5, name: '缓冲区', x: 60, y: 70, count: 34, activity: 'medium' },
+  { id: 6, name: '实验区', x: 80, y: 60, count: 23, activity: 'low' }
 ])
 
-// 趋势摘要数据
-const trendSummaryData = {
-  air: [
-    { label: '月均AQI', value: '42', trend: 'up' },
-    { label: '优良天数', value: '28天', trend: 'up' },
-    { label: '同比改善', value: '+15%', trend: 'up' }
-  ],
-  water: [
-    { label: '水质达标率', value: '100%', trend: 'stable' },
-    { label: '平均pH值', value: '7.1', trend: 'stable' },
-    { label: '溶解氧', value: '8.2mg/L', trend: 'up' }
-  ],
-  biodiversity: [
-    { label: '物种总数', value: '865种', trend: 'up' },
-    { label: '新发现物种', value: '3种', trend: 'up' },
-    { label: '保护成效', value: '98.5%', trend: 'up' }
-  ]
+// 生态标语
+const slogans = ref([
+  '每一只归来的鸟，都是生态修复的答卷',
+  '还湿于地，赋生于林',
+  '智慧监测守护生物多样性',
+  '用科技之眼，见证生态之美',
+  '保护湿地就是保护我们的未来'
+])
+
+// 鸟类图像切换
+const selectBirdImage = (index: number) => {
+  currentBirdIndex.value = index
 }
 
-const currentTrendSummary = computed(() => {
-  return trendSummaryData[selectedTrendTab.value as keyof typeof trendSummaryData] || []
-})
-
-const updateTime = () => {
-  const now = new Date()
-  currentTime.value = now.toLocaleTimeString('zh-CN', { hour12: false })
+// 自动轮播
+const startBirdCarousel = () => {
+  birdCarouselInterval = window.setInterval(() => {
+    currentBirdIndex.value = (currentBirdIndex.value + 1) % birdImages.value.length
+  }, 5000)
 }
 
-const getParticleStyle = (index: number) => {
-  const size = Math.random() * 3 + 1
-  const left = Math.random() * 100
-  const animationDuration = Math.random() * 5 + 4
-  const animationDelay = Math.random() * 3
+const stopBirdCarousel = () => {
+  if (birdCarouselInterval) {
+    clearInterval(birdCarouselInterval)
+    birdCarouselInterval = null
+  }
+}
+
+// 加载更多鸟类
+const loadMoreBirds = () => {
+  // 模拟加载更多
+  console.log('Loading more birds...')
+}
+
+// 显示鸟类详情
+const showBirdDetail = (bird: any) => {
+  console.log('Show bird detail:', bird)
+}
+
+// 绘制鸟类趋势图
+const drawBirdTrendChart = () => {
+  if (!birdTrendChart.value) return
   
-  return {
-    width: `${size}px`,
-    height: `${size}px`,
-    left: `${left}%`,
-    animationDuration: `${animationDuration}s`,
-    animationDelay: `${animationDelay}s`
-  }
-}
-
-const getAQILevel = (aqi: number) => {
-  if (aqi <= 50) {
-    return { status: '优', color: '#7ED321', class: 'excellent' }
-  } else if (aqi <= 100) {
-    return { status: '良', color: '#4A90E2', class: 'good' }
-  } else if (aqi <= 150) {
-    return { status: '轻度污染', color: '#F5A623', class: 'moderate' }
-  } else {
-    return { status: '重度污染', color: '#FF6B6B', class: 'poor' }
-  }
-}
-
-const goBack = () => {
-  router.push('/')
-}
-
-const selectWaterStation = (stationId: number) => {
-  selectedWaterStation.value = stationId
-}
-
-const selectTrendTab = (tabId: string) => {
-  selectedTrendTab.value = tabId
-  setTimeout(() => {
-    drawTrendChart()
-  }, 100)
-}
-
-const drawCategoryChart = (canvasElement: HTMLCanvasElement, data: number[]) => {
-  const ctx = canvasElement.getContext('2d')
+  const ctx = birdTrendChart.value.getContext('2d')
   if (!ctx) return
   
-  ctx.clearRect(0, 0, 60, 60)
+  ctx.clearRect(0, 0, 500, 280)
   
-  const centerX = 30
-  const centerY = 30
-  const radius = 25
-  const maxValue = Math.max(...data)
+  // 模拟数据
+  const years = ['2018', '2019', '2020', '2021', '2022', '2023', '2024']
+  const newSpecies = [12, 15, 8, 23, 19, 16, 21]
+  const samples = [1200, 1450, 1680, 2100, 2450, 2800, 3200]
+  const protectedSpecies = [42, 45, 48, 51, 53, 54, 56]
   
-  // 绘制背景圆
-  ctx.beginPath()
-  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-  ctx.strokeStyle = 'rgba(74, 144, 226, 0.2)'
-  ctx.lineWidth = 4
-  ctx.stroke()
+  const chartWidth = 440
+  const chartHeight = 220
+  const startX = 40
+  const startY = 240
+  const stepX = chartWidth / (years.length - 1)
   
-  // 绘制数据线
-  ctx.beginPath()
-  data.forEach((value, index) => {
-    const angle = (index / (data.length - 1)) * Math.PI * 2 - Math.PI / 2
-    const r = (value / maxValue) * radius
-    const x = centerX + Math.cos(angle) * r
-    const y = centerY + Math.sin(angle) * r
-    
-    if (index === 0) {
-      ctx.moveTo(x, y)
-    } else {
-      ctx.lineTo(x, y)
-    }
-  })
-  ctx.strokeStyle = '#7ED321'
-  ctx.lineWidth = 2
-  ctx.stroke()
-  
-  // 绘制数据点
-  data.forEach((value, index) => {
-    const angle = (index / (data.length - 1)) * Math.PI * 2 - Math.PI / 2
-    const r = (value / maxValue) * radius
-    const x = centerX + Math.cos(angle) * r
-    const y = centerY + Math.sin(angle) * r
-    
-    ctx.beginPath()
-    ctx.arc(x, y, 2, 0, 2 * Math.PI)
-    ctx.fillStyle = '#7ED321'
-    ctx.fill()
-  })
-}
-
-const drawTrendChart = () => {
-  if (!trendChart.value) return
-  
-  const ctx = trendChart.value.getContext('2d')
-  if (!ctx) return
-  
-  ctx.clearRect(0, 0, 450, 200)
-  
-  // 模拟不同类型的趋势数据
-  const trendData = {
-    air: [42, 38, 45, 35, 40, 32, 45],
-    water: [95, 97, 96, 98, 97, 99, 98],
-    biodiversity: [850, 855, 860, 862, 863, 865, 865]
-  }
-  
-  const data = trendData[selectedTrendTab.value as keyof typeof trendData] || []
-  const labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月']
-  
-  const maxValue = Math.max(...data)
-  const minValue = Math.min(...data)
-  const range = maxValue - minValue || 1
-  
-  const stepX = 400 / (data.length - 1)
-  const startX = 25
-  const startY = 170
-  const chartHeight = 140
-  
-  // 绘制网格线
+  // 绘制网格
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
   ctx.lineWidth = 1
   for (let i = 0; i <= 5; i++) {
     const y = startY - (i * chartHeight / 5)
     ctx.beginPath()
     ctx.moveTo(startX, y)
-    ctx.lineTo(startX + 400, y)
+    ctx.lineTo(startX + chartWidth, y)
     ctx.stroke()
   }
   
-  // 绘制趋势线
-  ctx.beginPath()
-  data.forEach((value, index) => {
-    const x = startX + index * stepX
-    const y = startY - ((value - minValue) / range) * chartHeight
-    
-    if (index === 0) {
-      ctx.moveTo(x, y)
-    } else {
-      ctx.lineTo(x, y)
-    }
-  })
-  ctx.strokeStyle = '#7ED321'
+  // 绘制新增种类线
+  ctx.strokeStyle = '#178DFF'
   ctx.lineWidth = 3
+  ctx.beginPath()
+  newSpecies.forEach((value, index) => {
+    const x = startX + index * stepX
+    const y = startY - (value / 30) * chartHeight
+    if (index === 0) ctx.moveTo(x, y)
+    else ctx.lineTo(x, y)
+  })
   ctx.stroke()
   
-  // 绘制数据点
-  data.forEach((value, index) => {
+  // 绘制点
+  newSpecies.forEach((value, index) => {
     const x = startX + index * stepX
-    const y = startY - ((value - minValue) / range) * chartHeight
-    
+    const y = startY - (value / 30) * chartHeight
     ctx.beginPath()
     ctx.arc(x, y, 4, 0, 2 * Math.PI)
-    ctx.fillStyle = '#7ED321'
+    ctx.fillStyle = '#178DFF'
     ctx.fill()
-    
-    ctx.beginPath()
-    ctx.arc(x, y, 6, 0, 2 * Math.PI)
-    ctx.strokeStyle = '#7ED321'
-    ctx.lineWidth = 2
-    ctx.stroke()
   })
   
-  // 绘制标签
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-  ctx.font = '12px Arial'
+  // 绘制年份标签
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+  ctx.font = '12px sans-serif'
   ctx.textAlign = 'center'
-  labels.forEach((label, index) => {
+  years.forEach((year, index) => {
     const x = startX + index * stepX
-    ctx.fillText(label, x, 190)
+    ctx.fillText(year, x, 265)
   })
 }
 
-let timeInterval: number
+// 绘制鸟类分布饼图
+const drawBirdPieChart = () => {
+  if (!birdPieChart.value) return
+  
+  const ctx = birdPieChart.value.getContext('2d')
+  if (!ctx) return
+  
+  ctx.clearRect(0, 0, 220, 220)
+  
+  const centerX = 110
+  const centerY = 110
+  const radius = 80
+  
+  let currentAngle = -Math.PI / 2
+  
+  birdCategories.value.forEach((category) => {
+    const angle = (category.percentage / 100) * Math.PI * 2
+    
+    // 绘制扇形
+    ctx.beginPath()
+    ctx.moveTo(centerX, centerY)
+    ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + angle)
+    ctx.closePath()
+    ctx.fillStyle = category.color
+    ctx.fill()
+    
+    // 绘制标签
+    const labelAngle = currentAngle + angle / 2
+    const labelX = centerX + Math.cos(labelAngle) * (radius + 20)
+    const labelY = centerY + Math.sin(labelAngle) * (radius + 20)
+    
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
+    ctx.font = '12px sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(category.percentage + '%', labelX, labelY)
+    
+    currentAngle += angle
+  })
+  
+  // 绘制中心圆
+  ctx.beginPath()
+  ctx.arc(centerX, centerY, radius * 0.3, 0, 2 * Math.PI)
+  ctx.fillStyle = '#0a0f1b'
+  ctx.fill()
+}
+
+// 标语滚动动画
+const startSloganAnimation = () => {
+  if (!sloganTrack.value) return
+  
+  const track = sloganTrack.value
+  let position = 0
+  
+  const animate = () => {
+    position -= 1
+    if (position <= -track.scrollWidth / 2) {
+      position = 0
+    }
+    track.style.transform = `translateX(${position}px)`
+    requestAnimationFrame(animate)
+  }
+  
+  requestAnimationFrame(animate)
+}
 
 onMounted(() => {
-  updateTime()
-  timeInterval = setInterval(updateTime, 1000)
-  
+  // 初始化图表
   setTimeout(() => {
-    // 绘制物种分类图表
-    speciesData.value.forEach(species => {
-      const canvas = categoryCharts.value[species.name]
-      if (canvas) {
-        drawCategoryChart(canvas, species.data)
-      }
-    })
-    
-    // 绘制趋势图表
-    drawTrendChart()
+    drawBirdTrendChart()
+    drawBirdPieChart()
   }, 100)
+  
+  // 启动鸟类图像轮播
+  startBirdCarousel()
+  
+  // 启动标语滚动
+  startSloganAnimation()
 })
 
 onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
+  stopBirdCarousel()
 })
 </script>
 
@@ -615,14 +575,15 @@ onUnmounted(() => {
 .ecology-page {
   width: 100%;
   height: 100vh;
-  background: linear-gradient(135deg, #0c1426 0%, #1a2332 50%, #0c1426 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #0a1628, #1a2f4e);
+  color: #fff;
   overflow: hidden;
   position: relative;
+  padding: 0;
 }
 
-// 背景动画
-.bg-animation {
+// 科技背景效果
+.tech-bg {
   position: absolute;
   top: 0;
   left: 0;
@@ -630,536 +591,828 @@ onUnmounted(() => {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+
+  .water-wave {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 30%, rgba(0, 170, 255, 0.05) 50%, transparent 70%);
+    animation: wave 15s ease-in-out infinite;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
 }
 
-.particle {
-  position: absolute;
-  background: rgba(126, 211, 33, 0.6);
-  border-radius: 50%;
-  animation: float linear infinite;
+@keyframes wave {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(50%) translateY(-20px); }
 }
 
-@keyframes float {
+// 数据统计横幅
+.data-banner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 0 20px;
+
+  .banner-item {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(20, 35, 60, 0.9), rgba(10, 25, 50, 0.9));
+    border: 1px solid rgba(50, 120, 180, 0.4);
+    border-radius: 6px;
+    padding: 15px 20px;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff88, transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 15px rgba(0, 255, 136, 0.2);
+      border-color: rgba(0, 255, 136, 0.5);
+    }
+
+    .item-icon {
+      font-size: 2rem;
+      filter: drop-shadow(0 2px 4px rgba(0, 255, 136, 0.3));
+      flex-shrink: 0;
+    }
+
+    .item-content {
+      flex: 1;
+      
+      .item-value {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        margin-bottom: 2px;
+
+        .number {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #00aaff;
+          text-shadow: 0 1px 3px rgba(0, 170, 255, 0.3);
+        }
+
+        .unit {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+      }
+
+      .item-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.2;
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
   0% {
-    transform: translateY(100vh) rotate(0deg);
+    transform: translateX(-100%);
     opacity: 0;
   }
-  10% {
-    opacity: 1;
-  }
-  90% {
+  50% {
     opacity: 1;
   }
   100% {
-    transform: translateY(-10px) rotate(360deg);
+    transform: translateX(100%);
     opacity: 0;
   }
 }
 
-.grid-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(rgba(126, 211, 33, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(126, 211, 33, 0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
-  z-index: 1;
-}
-
-// 头部
-.page-header {
-  position: relative;
-  z-index: 10;
-  padding: 20px;
-  border-bottom: 1px solid rgba(74, 144, 226, 0.3);
-  
-  @media (min-width: 768px) {
-    padding: 20px 40px;
-  }
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: rgba(126, 211, 33, 0.2);
-  border: 1px solid rgba(126, 211, 33, 0.5);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(126, 211, 33, 0.3);
-    transform: translateX(-2px);
-  }
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #7ED321;
-  margin: 0;
-}
-
-.time-display {
-  font-size: 18px;
-  color: #4A90E2;
-  font-weight: bold;
-}
-
-// 主内容
+// 主内容区域
 .page-main {
   position: relative;
   z-index: 10;
   display: flex;
-  padding: 20px;
   gap: 20px;
-  height: calc(100vh - 140px);
-  
-  @media (min-width: 768px) {
-    padding: 30px 40px;
-    gap: 30px;
-  }
-  
-  @media (max-width: 767px) {
-    flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 140px);
-  }
+  height: calc(100vh - 200px);
+  padding: 0 20px;
 }
 
 .left-section {
-  flex: 1;
+  flex: 5;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 15px;
+
+  .bird-carousel-card {
+    background: rgba(20, 35, 60, 0.8);
+    border: 1px solid rgba(50, 120, 180, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    height: 350px;
+
+    .carousel-container {
+      height: calc(100% - 50px);
+
+      .carousel-main {
+        height: calc(100% - 30px);
+        position: relative;
+        background: rgba(10, 20, 40, 0.6);
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(100, 200, 255, 0.3);
+
+        .bird-image-wrapper {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+
+          .image-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 255, 136, 0.1));
+
+            .bird-icon {
+              font-size: 4rem;
+              margin-bottom: 10px;
+              filter: drop-shadow(0 3px 6px rgba(0, 255, 136, 0.3));
+            }
+
+            .image-label {
+              font-size: 1rem;
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+
+          .image-info {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            padding: 20px;
+            color: #fff;
+
+            .bird-name {
+              font-size: 1.5rem;
+              font-weight: bold;
+              color: #00ff88;
+              margin: 0 0 10px 0;
+              text-shadow: 0 2px 4px rgba(0, 255, 136, 0.3);
+            }
+
+            .bird-details {
+              display: flex;
+              gap: 20px;
+              margin-bottom: 10px;
+
+              .detail-item {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.8);
+
+                i {
+                  font-style: normal;
+                  font-size: 1.1rem;
+                }
+              }
+            }
+
+            .ai-recognition {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              background: rgba(0, 170, 255, 0.2);
+              border: 1px solid rgba(0, 170, 255, 0.5);
+              border-radius: 20px;
+              padding: 5px 15px;
+              width: fit-content;
+
+              .ai-badge {
+                background: #00aaff;
+                color: #fff;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 0.75rem;
+                font-weight: bold;
+              }
+
+              .ai-result {
+                font-size: 0.9rem;
+                color: #00ff88;
+              }
+
+              .confidence {
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.7);
+              }
+            }
+          }
+        }
+      }
+
+      .carousel-indicators {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 15px;
+
+        .indicator {
+          width: 40px;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &.active {
+            background: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+          }
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.5);
+          }
+        }
+      }
+    }
+  }
+
+  .bird-atlas-card {
+    flex: 1;
+    background: rgba(20, 35, 60, 0.8);
+    border: 1px solid rgba(50, 120, 180, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+
+
+    .atlas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+
+      .subsection-title {
+        margin: 0;
+      }
+
+      .load-more-btn {
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.2), rgba(0, 255, 136, 0.2));
+        border: 1px solid rgba(0, 255, 136, 0.5);
+        color: #00ff88;
+        padding: 8px 20px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: linear-gradient(135deg, rgba(0, 170, 255, 0.3), rgba(0, 255, 136, 0.3));
+          transform: translateY(-1px);
+          box-shadow: 0 3px 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .count {
+          color: #00aaff;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .atlas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 5px;
+      
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(100, 200, 255, 0.5);
+        border-radius: 3px;
+      }
+
+      .bird-card {
+        background: rgba(10, 20, 40, 0.6);
+        border: 1px solid rgba(100, 200, 255, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 5px 20px rgba(50, 120, 180, 0.4);
+          border-color: #00ff88;
+        }
+
+        &.protected {
+          border-color: rgba(255, 100, 0, 0.5);
+        }
+
+        .bird-avatar {
+          font-size: 3rem;
+          text-align: center;
+          margin-bottom: 10px;
+          filter: drop-shadow(0 2px 4px rgba(0, 255, 136, 0.2));
+        }
+
+        .bird-info {
+          .bird-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+          }
+
+          .bird-scientific {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            margin-bottom: 8px;
+          }
+
+          .bird-habitat {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            i {
+              font-style: normal;
+            }
+          }
+        }
+
+        .protection-badge {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: rgba(255, 100, 0, 0.9);
+          color: #fff;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 0.7rem;
+          font-weight: bold;
+          backdrop-filter: blur(5px);
+        }
+      }
+    }
+
+  }
 }
 
 .right-section {
-  flex: 1.2;
+  flex: 4;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 15px;
+
+  .bird-trend-card,
+  .bird-distribution-card,
+  .hotspot-map-card {
+    background: rgba(20, 35, 60, 0.8);
+    border: 1px solid rgba(50, 120, 180, 0.5);
+    border-radius: 8px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  .bird-trend-card {
+    height: 280px;
+
+    .chart-container {
+      height: calc(100% - 80px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      canvas {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+
+    .trend-legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 15px;
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .legend-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+        }
+
+        .legend-label {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+  }
+
+  .bird-distribution-card {
+    height: 280px;
+
+    .distribution-content {
+      display: flex;
+      gap: 20px;
+      height: calc(100% - 50px);
+
+      .pie-chart-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .distribution-list {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+
+        .category-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px;
+          background: rgba(10, 20, 40, 0.4);
+          border-radius: 5px;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba(10, 20, 40, 0.6);
+          }
+
+          .category-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
+          }
+
+          .category-name {
+            flex: 1;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+          }
+
+          .category-count {
+            font-size: 0.85rem;
+            color: #00ff88;
+            font-weight: bold;
+          }
+
+          .category-percent {
+            font-size: 0.85rem;
+            color: #00aaff;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+
+  .hotspot-map-card {
+    height: 240px;
+
+    .hotspot-content {
+      height: calc(100% - 50px);
+
+      .map-wrapper {
+        height: 100%;
+        position: relative;
+        background: linear-gradient(135deg, rgba(0, 170, 255, 0.05), rgba(0, 255, 136, 0.05));
+        border-radius: 8px;
+        border: 1px solid rgba(100, 200, 255, 0.2);
+
+        .area-marker {
+          position: absolute;
+          transform: translate(-50%, -50%);
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+          }
+
+          .area-name {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #fff;
+            white-space: nowrap;
+            backdrop-filter: blur(5px);
+          }
+
+          .area-count {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #00ff88;
+            margin-top: 3px;
+          }
+
+          .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid;
+            animation: pulse 2s ease-out infinite;
+          }
+
+          &.high {
+            .pulse-ring {
+              border-color: #ff4444;
+            }
+          }
+
+          &.medium {
+            .pulse-ring {
+              border-color: #ffaa44;
+            }
+          }
+
+          &.low {
+            .pulse-ring {
+              border-color: #44ff44;
+            }
+          }
+        }
+
+        .map-legend {
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+          background: rgba(0, 0, 0, 0.7);
+          padding: 10px;
+          border-radius: 5px;
+          backdrop-filter: blur(5px);
+
+          .legend-title {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+          }
+
+          .legend-scale {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .scale-gradient {
+              width: 80px;
+              height: 8px;
+              background: linear-gradient(90deg, #44ff44, #ffaa44, #ff4444);
+              border-radius: 4px;
+            }
+
+            .scale-low,
+            .scale-high {
+              font-size: 0.75rem;
+              color: rgba(255, 255, 255, 0.6);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 1.3rem;
   font-weight: bold;
-  margin-bottom: 15px;
-  color: #7ED321;
-  border-left: 4px solid #7ED321;
-  padding-left: 12px;
+  color: #00ff88;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  i {
+    font-style: normal;
+    font-size: 1.5rem;
+  }
 }
 
 .subsection-title {
-  font-size: 16px;
+  font-size: 1.1rem;
   font-weight: bold;
-  margin-bottom: 15px;
-  color: #4A90E2;
+  color: #00aaff;
+  margin: 0 0 15px 0;
 }
 
-// 空气质量监测
-.air-quality-monitor {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(126, 211, 33, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
+// 底部区域
+.bottom-section {
+  position: relative;
+  z-index: 10;
+  margin-top: 15px;
+  padding: 0 20px;
+  max-height: 300px;
+  overflow-y: auto;
 
-.aqi-display {
-  display: flex;
-  gap: 20px;
-}
-
-.aqi-main {
-  text-align: center;
-  
-  .aqi-value {
-    font-size: 48px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    
-    &.excellent {
-      color: #7ED321;
-    }
-    
-    &.good {
-      color: #4A90E2;
-    }
-    
-    &.moderate {
-      color: #F5A623;
-    }
-    
-    &.poor {
-      color: #FF6B6B;
-    }
-  }
-  
-  .aqi-label {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
-  }
-  
-  .aqi-status {
-    font-size: 16px;
-    font-weight: bold;
-  }
-}
-
-.pollutant-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.pollutant-item {
-  display: grid;
-  grid-template-columns: 60px 1fr 40px;
-  grid-template-rows: 1fr 1fr;
-  gap: 5px;
-  align-items: center;
-  
-  .pollutant-name {
-    grid-row: 1 / 3;
-    font-size: 12px;
-    font-weight: bold;
-    color: #4A90E2;
-  }
-  
-  .pollutant-value {
-    font-size: 16px;
-    font-weight: bold;
-    color: #7ED321;
-  }
-  
-  .pollutant-unit {
-    grid-row: 1 / 3;
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-  
-  .pollutant-bar {
-    grid-column: 2;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
-    
-    .pollutant-progress {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-  }
-}
-
-// 水质监测
-.water-quality-monitor {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-  flex: 1;
-}
-
-.water-stations {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.station-card {
-  background: rgba(12, 20, 38, 0.6);
-  border: 1px solid rgba(74, 144, 226, 0.2);
-  border-radius: 8px;
-  padding: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: #4A90E2;
-    box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
-  }
-  
-  &.active {
-    border-color: #7ED321;
-    box-shadow: 0 0 15px rgba(126, 211, 33, 0.3);
-  }
-}
-
-.station-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  
-  .station-icon {
-    font-size: 18px;
-  }
-  
-  .station-name {
-    flex: 1;
-    font-size: 14px;
-    font-weight: bold;
-    color: #4A90E2;
-  }
-  
-  .station-status {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-    
-    &.excellent {
-      background: rgba(126, 211, 33, 0.2);
-      color: #7ED321;
-    }
-    
-    &.good {
-      background: rgba(74, 144, 226, 0.2);
-      color: #4A90E2;
-    }
-  }
-}
-
-.station-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  
-  .metric-label {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  
-  .metric-value {
-    color: #7ED321;
-    font-weight: bold;
-  }
-}
-
-// 生物多样性统计
-.biodiversity-stats {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.species-overview {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-.species-category {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 15px;
-  background: rgba(12, 20, 38, 0.6);
-  border: 1px solid rgba(74, 144, 226, 0.2);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: #4A90E2;
-    box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
-  }
-  
-  .category-icon {
-    font-size: 24px;
-  }
-  
-  .category-content {
-    flex: 1;
-    
-    .category-name {
-      font-size: 14px;
-      color: #4A90E2;
-      margin-bottom: 5px;
-    }
-    
-    .category-count {
-      font-size: 18px;
-      font-weight: bold;
-      color: #7ED321;
-      margin-bottom: 3px;
-    }
-    
-    .category-trend {
-      font-size: 10px;
-      
-      &.up {
-        color: #7ED321;
-      }
-      
-      &.stable {
-        color: #4A90E2;
-      }
-      
-      &.down {
-        color: #FF6B6B;
-      }
-    }
-  }
-  
-  .category-chart {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-// 湿地保护
-.wetland-protection {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.protection-map {
-  margin-bottom: 20px;
-  
-  .wetland-map-svg {
-    width: 100%;
-    height: 300px;
-    background: rgba(12, 20, 38, 0.4);
+  .restoration-comparison {
+    background: rgba(20, 35, 60, 0.8);
+    border: 1px solid rgba(50, 120, 180, 0.5);
     border-radius: 8px;
-  }
-}
+    padding: 30px;
+    backdrop-filter: blur(10px);
 
-.protection-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
+    .comparison-content {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      justify-content: center;
 
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: rgba(12, 20, 38, 0.4);
-  border-radius: 8px;
-  
-  .stat-icon {
-    font-size: 20px;
-  }
-  
-  .stat-content {
-    .stat-value {
-      font-size: 18px;
-      font-weight: bold;
-      color: #4A90E2;
+      .comparison-item {
+        text-align: center;
+
+        .year-label {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #00aaff;
+          margin-bottom: 15px;
+          text-shadow: 0 2px 4px rgba(0, 170, 255, 0.3);
+        }
+
+        .image-placeholder {
+          width: 250px;
+          height: 180px;
+          background: linear-gradient(135deg, rgba(0, 170, 255, 0.1), rgba(0, 255, 136, 0.1));
+          border: 2px solid rgba(100, 200, 255, 0.3);
+          border-radius: 8px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 15px;
+
+          .status-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+          }
+
+          .status-text {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+
+        .metrics {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .metric {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+
+            &.highlight {
+              color: #00ff88;
+              font-weight: bold;
+            }
+          }
+        }
+
+        &.before {
+          .image-placeholder {
+            border-color: rgba(255, 100, 100, 0.5);
+            background: linear-gradient(135deg, rgba(255, 100, 100, 0.1), rgba(255, 150, 100, 0.1));
+          }
+        }
+
+        &.after {
+          .image-placeholder {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 170, 255, 0.1));
+          }
+        }
+      }
+
+      .vs-divider {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+
+        .vs-icon {
+          font-size: 2rem;
+          font-weight: bold;
+          color: #ffaa44;
+          text-shadow: 0 3px 6px rgba(255, 170, 68, 0.5);
+        }
+
+        .progress-arrow {
+          font-size: 2.5rem;
+          color: #00ff88;
+          animation: arrowPulse 2s ease-in-out infinite;
+        }
+      }
     }
-    
-    .stat-label {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
+  }
+
+  .ecological-slogans {
+    margin-top: 20px;
+    background: rgba(20, 35, 60, 0.8);
+    border: 1px solid rgba(50, 120, 180, 0.5);
+    border-radius: 8px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+
+    .slogan-track {
+      display: flex;
+      gap: 50px;
+      white-space: nowrap;
+
+      .slogan-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+
+        .slogan-icon {
+          font-size: 1.3rem;
+          filter: drop-shadow(0 2px 4px rgba(0, 255, 136, 0.3));
+        }
+
+        .slogan-text {
+          font-style: italic;
+        }
+      }
     }
   }
 }
 
-// 环境趋势分析
-.environmental-trends {
-  background: rgba(26, 35, 50, 0.8);
-  border: 1px solid rgba(74, 144, 226, 0.3);
-  border-radius: 10px;
-  padding: 20px;
-  backdrop-filter: blur(10px);
-}
-
-.trend-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.trend-tab {
-  padding: 8px 16px;
-  background: rgba(12, 20, 38, 0.6);
-  border: 1px solid rgba(74, 144, 226, 0.2);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 12px;
-  
-  &:hover {
-    border-color: #4A90E2;
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
   }
-  
-  &.active {
-    background: rgba(126, 211, 33, 0.2);
-    border-color: #7ED321;
-    color: #7ED321;
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
   }
 }
 
-.trend-chart-container {
-  background: rgba(12, 20, 38, 0.4);
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: center;
-}
-
-.trend-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-.summary-item {
-  text-align: center;
-  padding: 10px;
-  background: rgba(12, 20, 38, 0.4);
-  border-radius: 8px;
-  
-  .summary-label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 5px;
+@keyframes arrowPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
   }
-  
-  .summary-value {
-    font-size: 16px;
-    font-weight: bold;
-    
-    &.up {
-      color: #7ED321;
-    }
-    
-    &.stable {
-      color: #4A90E2;
-    }
-    
-    &.down {
-      color: #FF6B6B;
-    }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
   }
 }
 </style>

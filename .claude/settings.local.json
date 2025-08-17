@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan:*)",
+      "Bash(php:*)",
+      "Bash(ls:*)",
+      "Bash(composer:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(/dev/null)",
+      "Bash(./test_api.sh:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(grep:*)",
+      "Bash(npm run dev:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(pkill:*)",
+      "Bash(awk:*)"
+    ],
+    "deny": []
+  }
+}
